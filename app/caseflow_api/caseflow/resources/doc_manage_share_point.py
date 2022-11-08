@@ -13,6 +13,8 @@ from caseflow.utils import auth, cors_preflight
 from caseflow.resources.share_point_helper import SharePoint
 from caseflow.services import DMSConnector
 from caseflow.utils.enums import DMSCode
+from caseflow.utils.enums import CaseflowRoles
+
 
 
 # keeping the base path same for cmis operations (upload / download) as cmis/
@@ -26,6 +28,8 @@ class CMISConnectorUploadResource(Resource):
 
     @staticmethod
     @auth.require
+    @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
+
     def post():
         
         if "upload" not in request.files:
@@ -72,6 +76,8 @@ class CMISConnectorUploadResource(Resource):
 
     @staticmethod
     @auth.require
+    @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
+
 
     def put():       
         if "upload" not in request.files:
@@ -116,6 +122,8 @@ class CMISConnectorDownloadResource(Resource):
 
     @staticmethod
     @auth.require
+    @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
+
     def get():
         """Getting resource from cms repo."""
         

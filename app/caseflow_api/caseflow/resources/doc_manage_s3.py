@@ -10,11 +10,11 @@ from flask_restx import Namespace, Resource
 from requests.auth import HTTPBasicAuth
 from caseflow.services import DocManageService
 from caseflow.resources.s3_helper import get_object,upload_object,delete_object,update_object
-
-
 from caseflow.utils import auth, cors_preflight
 from caseflow.services import DMSConnector
 from caseflow.utils.enums import DMSCode
+from caseflow.utils.enums import CaseflowRoles
+
 
 # keeping the base path same for cmis operations (upload / download) as cmis/
 
@@ -28,6 +28,7 @@ class CMISConnectorUploadResource(Resource):
 
     @staticmethod
     @auth.require
+    @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
     def post():
         
         if "upload" not in request.files:
@@ -77,6 +78,7 @@ class CMISConnectorUploadResource(Resource):
 
     @staticmethod
     @auth.require
+    @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
 
     def put():       
         if "upload" not in request.files:
@@ -134,6 +136,7 @@ class CMISConnectorDownloadResource(Resource):
 
     @staticmethod
     @auth.require
+    @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
     def get():
         """Getting resource from cms repo."""
         
