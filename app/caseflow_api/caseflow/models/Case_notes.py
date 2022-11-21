@@ -17,21 +17,17 @@ from sqlalchemy.orm import backref, relationship
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
 # from sqlalchemy.orm import relationship
 
-class CaseDocuments(BaseModel, db.Model):  # pylint: disable=too-many-public-methods
-    """This class manages CaseDocuments against each form."""
-    __tablename__ = "CaseDocuments"
+class CaseNotes(BaseModel, db.Model):  # pylint: disable=too-many-public-methods
+    """This class manages CaseNotes against each form."""
+    __tablename__ = "CaseNotes"
     id = db.Column(db.Integer, primary_key=True)
-    caseid = db.Column(
-        db.Integer,ForeignKey("Cases.id"), nullable=True
-    )
-    documentref = db.Column(db.String(100), nullable=True)
-    desc = db.Column(db.String(100), nullable=True)
-    addedbyuserid = db.Column(db.String(100), nullable=True)
+  
+    caseid = db.Column(db.Integer,ForeignKey("Cases.id"), nullable=True)
+    creationdate = db.Column(db.DateTime, nullable=True)
+    userid = db.Column(db.String(100), nullable=True)
+    notetext = db.Column(db.String(100), nullable=True)
+    
 
-    # docCases = relationship(
-    #     Cases, backref=backref("CaseEvents", uselist=True, cascade="delete,all")
-    # )
-
-
+   
 
  
