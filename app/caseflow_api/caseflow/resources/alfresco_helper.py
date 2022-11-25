@@ -21,7 +21,7 @@ from caseflow.utils.enums import DMSCode
 class AlfrescoHelper :
 
     @staticmethod
-    def file_upload_alfresco(cms_repo_url,cms_repo_username,cms_repo_password,url,data,caseID) :
+    def file_upload_alfresco(cms_repo_url,cms_repo_username,cms_repo_password,url,data,caseID="null") :
         document = requests.post(
         url,data = data['form'],files= data['file'],auth=HTTPBasicAuth(cms_repo_username, cms_repo_password)
     )

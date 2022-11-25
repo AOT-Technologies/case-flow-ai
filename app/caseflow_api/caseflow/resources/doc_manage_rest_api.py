@@ -12,6 +12,8 @@ from caseflow.utils.enums import DMSCode
 from caseflow.utils import auth, cors_preflight
 from caseflow.utils.enums import CaseflowRoles
 from werkzeug.datastructures import FileStorage
+from caseflow.resources.alfresco_helper import AlfrescoHelper
+
 
 
 
@@ -30,7 +32,7 @@ class CMISConnectorUploadResource(Resource):
     upload_parser.add_argument('cm:description', type=str, location='form', required=True)
     upload_parser.add_argument('relativePath', type=str, location='form', default = "uploads")
 
-
+    
     
 
     @API.expect(upload_parser)
@@ -58,27 +60,9 @@ class CMISConnectorUploadResource(Resource):
         if filename != "":
             try:
                 url = cms_repo_url + "1/nodes/-root-/children"
-                document = requests.post(
-                    url,data = request.form,files= files,auth=HTTPBasicAuth(cms_repo_username, cms_repo_password)
-                )
-
-                if document.ok:
-                    response = json.loads(document.text)
-                    formatted_document = DMSConnector.doc_upload_connector(response,DMSCode.DMS01.value)
-                    uploadeddata = DocManageService.doc_upload_mutation(request,formatted_document)
-                    print(uploadeddata)
-                    # print("Upload completed successfully!")
-                    if uploadeddata['status']=="success":
-                        return (
-                            (uploadeddata),HTTPStatus.OK,
-                        )
-                    else:
-                     url = cms_repo_url + "1/nodes/"+response['entry']['id']
-                     document = requests.delete(url,auth=HTTPBasicAuth(cms_repo_username, cms_repo_password))
-                     documentContent = document
-                     print(documentContent)
-                else:
-                    print("Something went wrong!")
+                data = {"file" :files, "form": request.form}
+                return AlfrescoHelper.file_upload_alfresco(cms_repo_url,cms_repo_username,cms_repo_password,url,data)
+                
 
             except UpdateConflictException:
                 return {

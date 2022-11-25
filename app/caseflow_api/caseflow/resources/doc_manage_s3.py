@@ -5,7 +5,7 @@ import json
 from flask import current_app, request,make_response,Response
 from flask_restx import Namespace, Resource,reqparse
 from caseflow.services import DocManageService
-from caseflow.resources.s3_helper import get_object,upload_object,delete_object,update_object
+from caseflow.resources.s3_helper import get_object,delete_object,update_object,file_upload_s3
 from caseflow.utils import auth, cors_preflight
 from caseflow.services import DMSConnector
 from caseflow.utils.enums import DMSCode
@@ -26,7 +26,7 @@ class CMISConnectorUploadResource(Resource):
     upload_parser.add_argument('name', type=str, location='form', required=True)
     upload_parser.add_argument('cm:description', type=str, location='form', required=True)    
     @API.expect(upload_parser)
-    @auth.require
+    # @auth.require
     def post(self):
         args = self.upload_parser.parse_args()
 
@@ -40,27 +40,8 @@ class CMISConnectorUploadResource(Resource):
         access_level = current_app.config.get("S3_DEFAULT_PERMISSION")
         if file_name != "":
             try:
-                data = upload_object(bucket_name,access_level,data,file_name)
-                response = data.get('response')
-                if response.get('HTTPStatusCode') == 200:
-                    file_data = data.get('object')
-                    formatted_document = DMSConnector.doc_upload_connector(file_data,DMSCode.DMS02.value)
-                    formatted_document["doc_type"] =  content_file.content_type
-                    formatted_document["doc_description"] =  args.get('cm:description')
-                    uploaded_data = DocManageService.doc_upload_mutation(request,formatted_document)
-                    print("Upload completed successfully!")
-                    if uploaded_data['status']=="success":
-                        return (
-                            (uploaded_data),HTTPStatus.OK,
-                        )
-                    else:
-
-                        response = delete_object(bucket_name,file_name)
-                        document_content = response
-                        print(document_content)
-                else:
-                    print("Something went wrong!")
-
+                return file_upload_s3(bucket_name,access_level,data,file_name,content_file,args)
+                
             except Exception as e:
                 return {
                     "message": "Unable to  upload files in the request", "error" : e

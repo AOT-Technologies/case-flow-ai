@@ -141,7 +141,7 @@ def create_aws_session():
     return session
 
 
-def file_upload_s3(bucket_name,access_level,data,file_name,content_file,args,caseID):
+def file_upload_s3(bucket_name,access_level,data,file_name,content_file,args,caseID="null"):
             data = upload_object(bucket_name,access_level,data,file_name)
             response = data.get('response')
             if response.get('HTTPStatusCode') == 200:
