@@ -1,6 +1,18 @@
-.recent-case-header{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-right:2rem ;
+
+.case-list-container{
+    padding: 2rem 3rem 0rem 8rem;
+
+    .recent-case-header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-right:2rem ;
+    }
+    .recent-case-typography{
+        padding: 1rem 1rem 1rem 1rem;        
+    }
+    .recent-cases-divider{
+        border-bottom-width: 3px;
+    }   
+
 }

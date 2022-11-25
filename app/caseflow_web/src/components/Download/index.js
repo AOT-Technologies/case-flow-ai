@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { fetchCMISfile } from "../../apiManager/services/cmisService";
-import "./download.css";
+import "./download.scss";
 
 const Download = (props) => {
   const [value, setValue] = useState("");

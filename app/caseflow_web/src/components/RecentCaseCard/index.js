@@ -19,7 +19,8 @@ const RecentCaseCard = ({ caseID, caseDescription, status }) => {
               primary={
                 <Typography 
                 variant="body2"
-                style={{ "fontWeight": "700" }}>
+                className="recent-case-card-title"
+                >
                   Case ID
                 </Typography>
               }
@@ -31,8 +32,8 @@ const RecentCaseCard = ({ caseID, caseDescription, status }) => {
               primary={
                 <Typography
                 variant="body2"
-                
-                style={{ "fontWeight": "700" }}>
+                className="recent-case-card-title"
+               >
                   Case Description
                 </Typography>
               }

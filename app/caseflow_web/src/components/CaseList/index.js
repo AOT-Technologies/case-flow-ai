@@ -72,10 +72,10 @@ const CaseList =React.memo( (props) => {
   }
   
   return (
-    <div style={{ padding: "2rem 3rem 0rem 8rem" }}>
+    <div  className="case-list-container">
       <span className="recent-case-header">
       <Typography
-        sx={{ padding: "1rem 1rem 1rem 1rem" }}
+      className="recent-case-typography"       
         variant="h6"
       >
         {props.config.title}
@@ -96,9 +96,9 @@ const CaseList =React.memo( (props) => {
          </Select>
         </FormControl> : "" }
       </span>
-      <Divider sx={{ borderBottomWidth: 3 }} />
+      <Divider className="recent-cases-divider" />
 
-      <List
+      <List      
         sx={{
           width: "100%",
           bgcolor: "background.paper",

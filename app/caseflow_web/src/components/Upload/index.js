@@ -137,17 +137,11 @@ const Upload = (props) => {
           />
         </div>
         <div
-          style={{
-            paddingTop: "1rem",
-            width: "100%",
-          }}
+        className="description-box-container"         
         >
           {file !== "" && (
             <div
-              style={{
-                paddingTop: "1rem",
-                width: "100%",
-              }}
+            className="description-box-container"
             >
               <TextField
                 id="outlined-multiline-static"
@@ -205,10 +199,7 @@ const Upload = (props) => {
         </div>
         {actionSelected === "update" && (
           <div          
-            style={{
-              paddingTop: "1rem",
-              width: "100%",
-            }}
+          className="description-box-container"
           >
             <TextField
               id="outlined-basic"
@@ -238,12 +229,7 @@ const Upload = (props) => {
          </div>}   */}
 
         <div className="upload-button">
-          <Button
-            style={{
-              margin: "auto",              
-              height: "3.4375rem",
-              width: "100%",
-            }}
+          <Button 
             variant="outlined"
             onClick={onSubmitHandler}
           >
@@ -266,8 +252,7 @@ const Upload = (props) => {
 
 
                     }}><pre>{JSON.stringify(response, null, 2) }</pre> </div> */}
-                     {(previewURL &&filetypeUploaded!=="plain" ) && <div className="display-upload-result" >
-          {/* <p className="preview-heading">Preview</p> */}
+     {(previewURL &&filetypeUploaded!=="plain" ) && <div className="display-upload-result" >        
          <FileViewer 
           key={Math.random()}      
           fileType={filetypeUploaded}
@@ -275,7 +260,8 @@ const Upload = (props) => {
           onError={onPreviewErrorhandler}
         >
         </FileViewer>
-         </div>} 
+      </div>} 
+
         </div>
       {/* </div> */}
     </div> 

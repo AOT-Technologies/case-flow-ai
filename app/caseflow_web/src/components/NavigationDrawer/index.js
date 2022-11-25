@@ -138,61 +138,39 @@ export default function MiniDrawer({ children }) {
     <Box >
       <CssBaseline />
       <Drawer variant="permanent" open={open} className="navaigation-drawer-container">
-        <DrawerHeader style={{ display: "flaex" }}>
+        <DrawerHeader className="navaigation-drawer-header">
           <div className="naviagtion-header">
-            <AccountCircleIcon
-              sx={{ fontSize: open ? "50px" : "40px", left: "20px", right: "10px" }}
+            <AccountCircleIcon className={`naviagtion-header-account-icon  ${open?"open-icon":"closed-icon"}` }            
             />
             <span>
-            <h3 style={{ fontSize: open ? "18px" : "0px", left: 0,textTransform:"capitalize" }}>
+            <h3  className={`naviagtion-header-userName  ${open?"open-userName":"closed-userName"}` }>
             {userInfo.userName}
             </h3>
-            <label style={{ fontSize: open ? "18px" : "0px", left: 0 }}>Administrator </label>
+            <label className={`naviagtion-header-role  ${open?"open-role":"closed-role"}` }>Administrator </label>
             </span> 
           </div>   
         </DrawerHeader>            
-        {open && <button className="logout-btn-caseflow" onClick={logoutCaseFlowHandler}>Logout <LogoutIcon style={{fontSize:"13px"}}/></button>}
+        {open && <button className="logout-btn-caseflow" onClick={logoutCaseFlowHandler}>Logout <LogoutIcon className="logout-btn" /></button>}
        {open && <Button variant="contained"
           className="btn-navigation-style"
-       style={{
-          width:"206px",
-          margin:".7rem auto 0",
-          backgroundColor:"#404040",
-          borderRadius:"8px",
-          transition:"all 1s ease",
-          "&:hover":{
-            backgroundColor:"black"
-          }
-          
-        }} component={Link} to="/private/cases/create">Start New Cases</Button>}
-        
+       component={Link} to="/private/cases/create">Start New Cases</Button>}        
         <List>
           {routes.map((route, index) => (
             <Link
               to={route.path}
               key={index}
-              style={{
-                color: "black",
-                textDecoration: "none",
-                
-              }}
+              className="navigation-link"              
             >
               <ListItem
                 key={index}
                 selected={route.path === pathname}
-                disablePadding
-                sx={{ display: "block" }}
+                className="navigation-link-item"
+                disablePadding               
               >
                 <ListItemButton
-                  sx={{
-                    minHeight: 55,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                    borderRadius:"10%",
-                margin:"0 1rem"
-                  }}
+                className={`navigation-link-item-btn ${open?"navigation-link-item-btn-open":"navigation-link-item-btn-closed"}`}                 
                 >
-                  <ListItemIcon
+                  <ListItemIcon                  
                     sx={{
                       minWidth: 0,
                       mr: open ? 3 : "auto",
@@ -214,31 +192,17 @@ export default function MiniDrawer({ children }) {
       <div className="Chevron-parent-container">
           {open ? (
               <ChevronLeftIcon
-                style={{  
-                  fontSize: "30px",
-                  position:"relative",
-                  borderRadius:"50%",
-                  border:"1px solid grey",
-                  zIndex:"1000",  
-                  marginTop:"3vh",
-                 left:"93.5%",
-                  backgroundColor:"#ffff"   ,
-                  cursor:"pointer",
-                }}
+              className="navi-drawer-left-icon"  
+              style={{   
+                fontSize: "30px",                 
+              }}           
                 onClick={handleDrawerToggle}
               />
               ) : (
                 <ChevronRightIcon
+                className="navi-drawer-right-icon" 
                 style={{   
-                  fontSize: "30px",
-                  position:"relative",
-                  borderRadius:"50%",
-                  border:"1px solid grey",
-                  zIndex:"1000",  
-                 marginTop:"3vh",
-                 left:"75.5%",
-                  backgroundColor:"#ffff"   ,
-                  cursor:"pointer",
+                  fontSize: "30px",                 
                 }}
                 onClick={handleDrawerToggle}
                 />

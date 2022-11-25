@@ -38,7 +38,12 @@
       Button{
         border-color: $primary-theme-black-color;
         color: $primary-theme-black-color;
+        margin: auto;
+        width: 100%;
+        height: 3.4375rem;
+      
       }
+
     }
   }
 
@@ -50,6 +55,15 @@
       max-height: 95%;
       box-shadow: rgba(0, 0, 0, 0.25) 0px 5px 15px;
       border-radius: 10px;
+    }
+  }
+  .description-box-container{
+    padding-top: 1rem;
+    width: 100%;
+  }
+  .file-name-text-field-upload{
+    label{
+      color: $primary-theme-black-color;
     }
   }
 }
@@ -77,4 +91,7 @@
   font-size: 1rem;
   line-height: 1.4375em;
   letter-spacing: 0.00938em;
+}
+.description-box-container{
+
 }

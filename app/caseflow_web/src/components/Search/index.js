@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SearchIcon from "@mui/icons-material/Search";
+import "./Search.scss"
 const Search = ({ setSearchField, dropDownArray, setSearchColumn }) => {
   return (
     <>
@@ -28,10 +29,8 @@ const Search = ({ setSearchField, dropDownArray, setSearchColumn }) => {
           endAdornment={
             <div>
               <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: "fit-content",
+              className="search-container-box"
+                sx={{                  
                   bgcolor: "background.paper",
                   color: "text.secondary",
                   "& hr": {

@@ -5,6 +5,7 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { Controller, useForm } from "react-hook-form";
 import Divider from "@mui/material/Divider";
+import "./NewCase.scss"
 
 const NewCase = () => {
   const { handleSubmit, reset, control,register } = useForm();
@@ -12,14 +13,14 @@ const NewCase = () => {
 
 
   return (
-    <div style={{ padding: "2rem 3rem 0rem 8rem" }}>
-      <Typography sx={{ padding: "1rem 1rem 1rem 1rem" }} variant="h6">
+    <div className="new-case-container">
+      <Typography  className="new-case-heading" variant="h6">
         New Case
       </Typography>
-      <Divider sx={{ borderBottomWidth: 3 }} />
-      <Grid container spacing={3} sx={{ padding: "2rem 1rem 2rem 1rem" }}>
+      <Divider sx={{ borderBottomWidth: 3 }} className="new-case-divider" />
+      <Grid container spacing={3} className="new-case-table-grid" >
         <Grid item xs={4}>
-          <Typography sx={{ padding: "1rem 1rem 0rem 0rem" }} variant="body2">
+          <Typography  className="new-case-table-heading" variant="body2">
             Case Name :
           </Typography>
           </Grid>
@@ -31,23 +32,24 @@ const NewCase = () => {
             <TextField
               id="standard-basic"
               label="Case Name"
-              variant="standard"
-              style={{
-                width: "100%",
-                border:"none"
-                
-              }}
+              variant="standard"                           
               value={value} 
               onChange={onChange}
               placeholder="File Name..."
+              sx={{
+                "& .MuiInputLabel-root": { color: "#404040" },
+                borderBottom: "1px solid #404040",  
+                width: "100%",            
+              }}    
+              InputProps={{ disableUnderline: true }}
             />
           )}
         />          
       </Grid>
       </Grid>
-      <Grid container spacing={1} sx={{ padding: "2rem 1rem 2rem 1rem" }}>
+      <Grid container spacing={1} className="new-case-table-grid">
         <Grid item xs={4}>
-          <Typography sx={{ padding: "1rem 1rem 0rem 0rem" }} variant="body2">
+          <Typography className="new-case-table-heading" variant="body2">
             Case Description :
           </Typography>
         </Grid>
@@ -76,9 +78,9 @@ const NewCase = () => {
       />          
         </Grid>
       </Grid>
-      <Grid container spacing={1} sx={{ padding: "2rem 1rem 2rem 1rem" }}>
+      <Grid container spacing={1} className="new-case-table-grid">
         <Grid item xs={4}>
-          <Typography sx={{ padding: "1rem 1rem 0rem 0rem" }} variant="body2">
+          <Typography className="new-case-table-heading" variant="body2">
             Attach Documents :
           </Typography>
         </Grid>
@@ -86,47 +88,28 @@ const NewCase = () => {
           <input type="file" id="actual-btn" {...register("file")} hidden />
 
           <Button
-            style={{
-              width: "100%",
-              height: "3.4375rem",
-              border:"1px solid #404040"
-            }}
+          className="btn-style-container"            
             variant="outlined"
           >
             <label
               htmlFor="actual-btn"
-              style={{
-                width: "100%",
-                color:"#404040"
-              }}
+              className="btn-style-label"              
             >
               Choose File
             </label>
           </Button>
         </Grid>
       </Grid>
-      <div style={{"display" : "flex", padding: "2rem 1rem 1rem 1rem"}}>
+      <div className="new-case-action-center" >
           <Button
-            style={{
-              alignItems :"center",
-              margin: "auto",
-              height: "3.4375rem",
-              width: "30%",
-              backgroundColor:"#404040"
-            }}
+          className="new-case-action-btn"           
             variant="contained"
             onClick={handleSubmit(onSubmit)}
           >
             Submit
           </Button>
           <Button
-            style={{
-              alignItems :"center",
-              margin: "auto",
-              height: "3.4375rem",
-              width: "30%",
-              backgroundColor:"#404040"
-            }}
+          className="new-case-action-btn"           
             variant="contained"
             onClick={() => reset()} 
           >
