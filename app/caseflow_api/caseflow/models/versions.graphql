@@ -5,17 +5,7 @@ type Versions {
   modificationdate: DateTime
   versions: String
   documentid: String
-  document: Document
-    @materializer(
-      query: "getDocument"
-      arguments: [
-        { name: "id", field: "docid" }
-        { name: "id", field: "docid" }
-        { name: "id", field: "docid" }
-        { name: "id", field: "docid" }
-        { name: "id", field: "docid" }
-      ]
-    )
+  document: Document @materializer(query: "getDocumentUsingVersions_fk")
 }
 
 """

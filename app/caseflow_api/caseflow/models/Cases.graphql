@@ -1,0 +1,199 @@
+"""
+Table: 'Cases'
+Column: 'linkedcases'
+  DB Type '_int8' is not supported. Column omitted
+Column: 'involvedparties'
+  DB Type '_int8' is not supported. Column omitted
+"""
+type Cases {
+  archivedate: Date
+  completiondate: Date
+  creationdate: Date
+  currentownerid: ID
+  desc: String
+  id: ID!
+  lastmodificationdate: Date
+  lobid: String
+  name: String
+  penduntildate: Date
+  startuserid: ID
+  statusid: ID
+  typeid: ID
+  # caseDocuments: [CaseDocuments]
+  #   @materializer(query: "getCaseDocumentsUsingCaseDocuments_caseid_fkey")
+  # caseExtraData: [CaseExtraData]
+  #   @materializer(query: "getCaseExtraDataUsingCaseExtraData_caseid_fkey")
+  # caseNotes: [CaseNotes]
+  #   @materializer(query: "getCaseNotesUsingCaseNotes_caseid_fkey")
+  # caseStatuses: CaseStatuses
+  #   @materializer(query: "getCaseStatusesUsingCases_statusid_fkey")
+  # caseTypes: CaseTypes
+  #   @materializer(query: "getCaseTypesUsingCases_typeid_fkey")
+  document: [Document]
+    @materializer(query: "getDocumentUsingDocument_caseid_fkey")
+  # personUsingCases_currentownerid_fkey: Person
+  #   @materializer(query: "getPersonUsingCases_currentownerid_fkey")
+  # personUsingCases_startuserid_fkey: Person
+  #   @materializer(query: "getPersonUsingCases_startuserid_fkey")
+}
+
+type Query {
+  " Queries for type 'Cases' "
+  getCases(id: ID!): Cases
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "Cases"
+      configuration: "postgresql_config"
+    )
+  getCasesList: [Cases]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "Cases"
+      configuration: "postgresql_config"
+    )
+  getCasesPaginatedList(first: Int, after: Int): [Cases]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" ORDER BY "id" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+  getCasesUsingCaseDocuments_caseid_fkey(caseid: ID!): Cases
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  getCasesUsingCaseExtraData_caseid_fkey(caseid: ID!): Cases
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  getCasesUsingCaseNotes_caseid_fkey(caseid: ID!): Cases
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  getCasesUsingCases_currentownerid_fkey(id: ID!): [Cases]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "currentownerid" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  getCasesUsingCases_startuserid_fkey(id: ID!): [Cases]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "startuserid" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  getCasesUsingCases_statusid_fkey(id: Int!): [Cases]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "statusid" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  getCasesUsingCases_typeid_fkey(id: Int!): [Cases]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "typeid" = $1
+      """
+      configuration: "postgresql_config"
+    )
+}
+
+type Mutation {
+  " Mutations for type 'Cases' "
+  deleteCases(id: ID!): Cases
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "Cases"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertCases(
+    name: String
+    archivedate: Date
+    startuserid: ID
+    statusid: ID
+    lobid: String
+    lastmodificationdate: Date
+    completiondate: Date
+    currentownerid: ID
+    creationdate: Date
+    desc: String
+    typeid: ID
+    penduntildate: Date
+  ): Cases
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "Cases"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  updateCases(
+    id: ID!
+    archivedate: Date
+    completiondate: Date
+    creationdate: Date
+    currentownerid: ID
+    desc: String
+    lastmodificationdate: Date
+    lobid: String
+    name: String
+    penduntildate: Date
+    startuserid: ID
+    statusid: ID
+    typeid: ID
+  ): Cases
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      UPDATE "Cases" SET
+        "archivedate" = COALESCE($2, "archivedate"),
+        "completiondate" = COALESCE($3, "completiondate"),
+        "creationdate" = COALESCE($4, "creationdate"),
+        "currentownerid" = COALESCE($5, "currentownerid"),
+        "desc" = COALESCE($6, "desc"),
+        "lastmodificationdate" = COALESCE($7, "lastmodificationdate"),
+        "lobid" = COALESCE($8, "lobid"),
+        "name" = COALESCE($9, "name"),
+        "penduntildate" = COALESCE($10, "penduntildate"),
+        "startuserid" = COALESCE($11, "startuserid"),
+        "statusid" = COALESCE($12, "statusid"),
+        "typeid" = COALESCE($13, "typeid")
+      WHERE
+        "id" = $1
+      RETURNING *
+      """
+      configuration: "postgresql_config"
+    )
+}

@@ -14,9 +14,10 @@ type Document {
   docname: String
   creationdate: DateTime
   modificationdate: DateTime
-  dms_provider:Int
-  documentList: [Document] @materializer(query: "getDocumentUsingVersions")
-  versionsList: [Versions] @materializer(query: "getVersionsUsingDocid")
+  dms_provider: Int
+  caseid:Int
+
+
 }
 
 """
@@ -80,6 +81,8 @@ type Mutation {
     metadata: String!
     contenttype: String!
     dms_provider: Int!
+  caseid:Int
+
   ): Document
     @dbquery(
       type: "postgresql"
@@ -120,18 +123,27 @@ type Mutation {
       type: "postgresql"
       query: """
       UPDATE "document" SET
-      "modificationdate"= $2,
-      "downloadurl"= $3,
-      "creationuser"= $4,
-      "description"= $5,
-      "name"=$6,
-      "content"= $7,
-      "modificationuser"= $8,
-      "contentsize"= $9,
-      "latestversion"= $10,
-      "contenttype"= $11 
-      "docname"= $12 WHERE "documentid" = $1
+        "caseid" = COALESCE($2, "caseid"),
+        "content" = COALESCE($3, "content"),
+        "contentsize" = COALESCE($4, "contentsize"),
+        "contenttype" = COALESCE($5, "contenttype"),
+        "creationdate" = COALESCE($6, "creationdate"),
+        "creationuser" = COALESCE($7, "creationuser"),
+        "description" = COALESCE($8, "description"),
+        "dms_provider" = COALESCE($9, "dms_provider"),
+        "docname" = COALESCE($10, "docname"),
+        "documentid" = COALESCE($11, "documentid"),
+        "downloadurl" = COALESCE($12, "downloadurl"),
+        "latestversion" = COALESCE($13, "latestversion"),
+        "metadata" = COALESCE($14, "metadata"),
+        "modificationdate" = COALESCE($15, "modificationdate"),
+        "modificationuser" = COALESCE($16, "modificationuser"),
+        "name" = COALESCE($17, "name")
+      WHERE
+        "id" = $1
+      RETURNING *
       """
       configuration: "postgresql_config"
+      schema: "public"
     )
 }

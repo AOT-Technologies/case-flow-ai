@@ -2,10 +2,11 @@
 
 from caseflow.services.doc_manage import DocManageService
 from caseflow.services.DMS_connector.connector import DMSConnector
-
+from caseflow.services.case_manage import CaseManageService
 
 __all__ = [
     "DocManageService",
-    "DMSConnector"
+    "DMSConnector",
+    "CaseManageService"
     
 ]

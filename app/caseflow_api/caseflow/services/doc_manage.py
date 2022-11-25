@@ -8,7 +8,7 @@ from datetime import datetime
 class DocManageService:
     """This class manages doc service."""
     @staticmethod
-    def doc_upload_mutation(request,document)-> Dict:
+    def doc_upload_mutation(request,document,caseID)-> Dict:
         """ Do upload document """
 
         stepzen_endpoint_url =current_app.config.get("STEPZEN_ENDPOINT_URL")  
@@ -43,6 +43,7 @@ class DocManageService:
             docname: "%s"
             modificationdate: "%s"
             dms_provider: %s
+            caseid : %s
         ) {
             id,
             documentid,
@@ -50,7 +51,7 @@ class DocManageService:
         }
         }
 
-        #     """ % (doc_id,doc_size,doc_type,doc_created,doc_name,doc_description,doc_download_url,version,doc_name,doc_name,doc_dmsname,doc_modified,dms_provider)
+        #     """ % (doc_id,doc_size,doc_type,doc_created,doc_name,doc_description,doc_download_url,version,doc_name,doc_name,doc_dmsname,doc_modified,dms_provider,caseID)
        
         variables = {}
         try:

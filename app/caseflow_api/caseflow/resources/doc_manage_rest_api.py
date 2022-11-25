@@ -34,7 +34,7 @@ class CMISConnectorUploadResource(Resource):
     
 
     @API.expect(upload_parser)
-    @auth.require
+    # @auth.require
     # @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
     def post(self):
         """New entry in cms repo with the new resource."""
