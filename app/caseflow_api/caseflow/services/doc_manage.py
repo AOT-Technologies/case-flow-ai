@@ -25,6 +25,8 @@ class DocManageService:
         doc_created = document['doc_created']
         doc_download_url = document["doc_download_url"]
         dms_provider=document["dms_provider"]
+        
+
     
         query = """mutation insertDocument {
         insertDocument(

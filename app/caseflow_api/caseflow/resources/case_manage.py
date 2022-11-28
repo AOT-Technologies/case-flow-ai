@@ -10,7 +10,6 @@ from caseflow.utils.enums import DMSCode
 from caseflow.resources.case_manage_helper import CaseManageHelper
 
 
-
 # keeping the base path same for case management operations
 
 API = Namespace("CASE", description="CRED Operations of a case")
@@ -26,10 +25,9 @@ class CaseManagementResource(Resource):
     upload_parser.add_argument('description', type=str, location='form', required=True)
     upload_parser.add_argument('DMS', type=str, location='form', required=True)
 
-
-    # @auth.require
-    # @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
-
+    @API.expect(upload_parser)
+    @auth.require
+    @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
     def post(self):
         args = self.upload_parser.parse_args()
 
@@ -44,19 +42,19 @@ class CaseManagementResource(Resource):
 
                     if DMS == DMSCode.DMS01.value :
                         result = CaseManageHelper.new_case_document_upload_alfresco(caseDetails, args, caseID)
-                        
-                    elif DMS == DMSCode.DMS02.value :
-                        result =  CaseManageHelper.new_case_document_upload_s3(caseDetails, args, caseID)
 
-                    elif DMS == DMSCode.DMS03 :
-                        pass
-                        # sharepoint
+                    elif DMS == DMSCode.DMS02.value :
+                        result = CaseManageHelper.new_case_document_upload_s3(caseDetails, caseID)
+
+                    elif DMS == DMSCode.DMS03.value :
+                        result = CaseManageHelper.new_case_document_upload_sharepoint(caseDetails, caseID)
+
                     else :
-                        pass
-                        # bug ...select a valid dms
+                        raise Exception('select a valid DMS')
+
                     if result :
-                            return {"message": "New case is added successfully",
-                                    "status": "success"}, HTTPStatus.OK
+                        return {"message": "New case is added successfully",
+                                "status": "success"}, HTTPStatus.OK
 
             else :
                 return validated

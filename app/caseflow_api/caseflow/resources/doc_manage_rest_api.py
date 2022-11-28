@@ -36,8 +36,8 @@ class CMISConnectorUploadResource(Resource):
     
 
     @API.expect(upload_parser)
-    # @auth.require
-    # @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
+    @auth.require
+    @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
     def post(self):
         """New entry in cms repo with the new resource."""
         #cms configuration
@@ -62,8 +62,7 @@ class CMISConnectorUploadResource(Resource):
                 url = cms_repo_url + "1/nodes/-root-/children"
                 data = {"file" :files, "form": request.form}
                 return AlfrescoHelper.file_upload_alfresco(cms_repo_url,cms_repo_username,cms_repo_password,url,data)
-                
-
+            
             except UpdateConflictException:
                 return {
                     "message": "Unable to  upload files in the request", "error" : e.message
@@ -170,7 +169,7 @@ class CMISConnectorDownloadResource(Resource):
                             'type': 'int', 'default': 1}})
 
     @auth.require
-    # @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
+    @auth.has_role([CaseflowRoles.CASEFLOW_ADMINISTRATOR.value])
     def get(self):
         """Getting resource from cms repo."""
         cms_repo_url = current_app.config.get("CMS_REPO_URL")

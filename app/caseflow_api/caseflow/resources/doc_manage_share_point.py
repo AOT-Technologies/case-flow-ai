@@ -23,7 +23,7 @@ class CMISConnectorUploadResource(Resource):
     upload_parser = reqparse.RequestParser()
     upload_parser.add_argument('upload', location='files',type=FileStorage, required=True)
     @API.expect(upload_parser)
-    @auth.require
+    # @auth.require
     def post(self):
 
         if "upload" not in request.files:
@@ -36,25 +36,7 @@ class CMISConnectorUploadResource(Resource):
         if file_name != "":
             try:
 
-                document = SharePoint().upload_file(file_name,SHAREPOINT_FOLDER_NAME,data)
-                if document.exists:
-                    response = document.properties
-                    file_url = document.serverRelativeUrl
-                    formatted_document = DMSConnector.doc_upload_connector(response,DMSCode.DMS03.value)
-                    formatted_document["doc_type"] =  content_file.content_type
-                    formatted_document["doc_description"] =  request.form.get('cm:description')
-                    uploaded_data = DocManageService.doc_upload_mutation(request,formatted_document)
-                    print("Upload completed successfully!")
-                    if uploaded_data['status']=="success":
-                        return (
-                            (uploaded_data),HTTPStatus.OK,
-                        )
-                    else:
-                        document = SharePoint().delete_file(file_url)
-                        document_content = document
-                        print("document deleted")
-                else:
-                    print("Something went wrong!")
+                return SharePoint.file_upload_sharepoint(SHAREPOINT_FOLDER_NAME, file_name, data, content_file.content_type, request.form.get('cm:description'))
 
             except Exception as e:
                 return {
