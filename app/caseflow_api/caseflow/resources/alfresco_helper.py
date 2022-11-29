@@ -40,9 +40,15 @@ class AlfrescoHelper :
             print("Something went wrong!")
 
     @staticmethod
-    def format_data(caseDetails) :
-        file = {'filedata': caseDetails["content_file"]}
-        form = MultiDict([('name', caseDetails['file_name']), ("nodeType", 'cm:content'),("cm:title", 'My text'),("cm:description", caseDetails["description"]),("relativePath", "Uploads")])
+    def format_data(caseDetails,cms_repo_folder_name) :
+        file = {'filedata': caseDetails["document_details"]["content_file"]}
+        form = MultiDict([('name', caseDetails["document_details"]['doc_name']), ("nodeType", 'cm:content'),("cm:description", caseDetails["document_details"]["doc_description"]),("relativePath", cms_repo_folder_name)])
+        return {"file" :file, "form": form}
+
+    def format_data_rest_api(args,cms_repo_folder_name) :
+        contentfile = args["upload"]
+        file = {'filedata': contentfile.read()}
+        form = MultiDict([('name', args['name']), ("nodeType", 'cm:content'),("cm:description", args["description"]),("relativePath", cms_repo_folder_name)])
         return {"file" :file, "form": form}
 
            

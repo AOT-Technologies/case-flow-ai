@@ -141,21 +141,34 @@ def create_aws_session():
     return session
 
 
-def file_upload_s3(bucket_name,access_level,data,file_name,content_file,args,caseID="null"):
-            data = upload_object(bucket_name,access_level,data,file_name)
+def file_upload_s3(bucket_name,access_level,document_details,caseID="null"):
+            data = upload_object(bucket_name,access_level,document_details["data"],document_details["doc_name"])
             response = data.get('response')
             if response.get('HTTPStatusCode') == 200:
                 file_data = data.get('object')
                 formatted_document = DMSConnector.doc_upload_connector(file_data,DMSCode.DMS02.value)
-                formatted_document["doc_type"] =  content_file.content_type
-                formatted_document["doc_description"] =  args.get('description')
+                formatted_document["doc_type"] =  (document_details["content_file"]).content_type
+                formatted_document["doc_description"] = document_details["doc_description"] 
                 uploaded_data = DocManageService.doc_upload_mutation(request,formatted_document,caseID)
                 print("Upload completed successfully!")
                 if uploaded_data['status']=="success":
                     return uploaded_data
                     
                 else:
-                    response = delete_object(bucket_name,file_name)
+                    response = delete_object(bucket_name,document_details["doc_name"])
                     return uploaded_data
             else:
                 print("Something went wrong!")
+
+def format_document_details(args):
+    content_file = args["upload"]
+    file_name = args["name"]
+    data =content_file.read()
+    return {
+                "doc_description" : args["description"],
+                "doc_name" : args["name"],
+                "content_file" : content_file,
+                "file_name" : file_name,
+                "data" : data,
+            }
+

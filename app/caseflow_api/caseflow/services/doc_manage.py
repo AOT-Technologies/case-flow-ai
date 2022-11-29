@@ -26,8 +26,6 @@ class DocManageService:
         doc_download_url = document["doc_download_url"]
         dms_provider=document["dms_provider"]
         
-
-    
         query = """mutation insertDocument {
         insertDocument(
             documentid: "%s"
@@ -46,6 +44,7 @@ class DocManageService:
             modificationdate: "%s"
             dms_provider: %s
             caseid : %s
+            isdeleted : false
         ) {
             id,
             documentid,
@@ -264,3 +263,26 @@ class DocManageService:
                 "error": update_error,
             }    
         return response
+
+    # @staticmethod
+    # def fetchdocumentUsingCaseId(caseId):
+    #     """ fetch id from  document by documentid """
+    #     stepzen_endpoint_url =current_app.config.get("STEPZEN_ENDPOINT_URL")  
+    #     stepzen_api_key =current_app.config.get("STEPZEN_API_KEY") 
+    #     query = """
+    #     query getDocumentUsingCaseId($id: Int!){
+    #         getDocumentUsingCaseId(id: $id){
+    #             id
+    #             name
+  
+    #         }
+    #     }
+    #         """
+    #     variables = {"id": caseId}
+    #     try:
+    #         print(query)
+    #         headers = {"Content-Type": "application/json", "Authorization": "Apikey "+stepzen_api_key}
+    #         r = requests.post(stepzen_endpoint_url, json={'query': query, 'variables': variables}, headers=headers)
+    #         data = r.json()
+    #     except:
+    #         pass

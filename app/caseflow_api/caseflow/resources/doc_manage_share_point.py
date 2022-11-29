@@ -22,28 +22,22 @@ class CMISConnectorUploadResource(Resource):
 
     upload_parser = reqparse.RequestParser()
     upload_parser.add_argument('upload', location='files',type=FileStorage, required=True)
+    upload_parser.add_argument('name', type=str, location='form', required=True)
+    upload_parser.add_argument('description', type=str, location='form', required=True)   
     @API.expect(upload_parser)
-    # @auth.require
+    @auth.require
     def post(self):
 
-        if "upload" not in request.files:
-            return {"message": "No upload files in the request"}, HTTPStatus.BAD_REQUEST
-        print(request)
-        content_file = request.files["upload"]
-        file_name = content_file.filename
-        data =content_file.read()   
+        args = self.upload_parser.parse_args()
         SHAREPOINT_FOLDER_NAME  = current_app.config.get("SHAREPOINT_FOLDER_NAME")   
-        if file_name != "":
-            try:
+        document_details = SharePoint.format_document_details(args)
+        try:
+            return SharePoint.file_upload_sharepoint(SHAREPOINT_FOLDER_NAME,document_details)
+        except Exception as e:
+            return {
+                "message": "Unable to  upload files in the request", "error" : e.message
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
 
-                return SharePoint.file_upload_sharepoint(SHAREPOINT_FOLDER_NAME, file_name, data, content_file.content_type, request.form.get('cm:description'))
-
-            except Exception as e:
-                return {
-                    "message": "Unable to  upload files in the request", "error" : e.message
-                }, HTTPStatus.INTERNAL_SERVER_ERROR
-        else:
-            return {"message": "Unable to  upload files in the request"}, HTTPStatus.BAD_REQUEST
 
 
 @cors_preflight("GET,POST,OPTIONS,PUT")

@@ -5,7 +5,7 @@ import json
 from flask import current_app, request,make_response,Response
 from flask_restx import Namespace, Resource,reqparse
 from caseflow.services import DocManageService
-from caseflow.resources.s3_helper import get_object,delete_object,update_object,file_upload_s3
+from caseflow.resources.s3_helper import get_object,delete_object,update_object,file_upload_s3, format_document_details
 from caseflow.utils import auth, cors_preflight
 from caseflow.services import DMSConnector
 from caseflow.utils.enums import DMSCode
@@ -24,30 +24,23 @@ class CMISConnectorUploadResource(Resource):
     upload_parser = reqparse.RequestParser()
     upload_parser.add_argument('upload', location='files',type=FileStorage, required=True)
     upload_parser.add_argument('name', type=str, location='form', required=True)
-    upload_parser.add_argument('cm:description', type=str, location='form', required=True)    
+    upload_parser.add_argument('description', type=str, location='form', required=True)    
     @API.expect(upload_parser)
-    # @auth.require
+    @auth.require
     def post(self):
         args = self.upload_parser.parse_args()
 
-        if "upload" not in args:
-            return {"message": "No upload files in the request"}, HTTPStatus.BAD_REQUEST
-
-        content_file = args["upload"]
-        file_name = content_file.filename
-        data =content_file.read()
         bucket_name = current_app.config.get("S3_BUCKET_NAME")
         access_level = current_app.config.get("S3_DEFAULT_PERMISSION")
-        if file_name != "":
-            try:
-                return file_upload_s3(bucket_name,access_level,data,file_name,content_file,args)
-                
-            except Exception as e:
-                return {
-                    "message": "Unable to  upload files in the request", "error" : e
-                }, HTTPStatus.INTERNAL_SERVER_ERROR
-        else:
-            return {"message": "Unable to  upload files in the request"}, HTTPStatus.BAD_REQUEST
+        document_details = format_document_details(args)
+        try:
+            return file_upload_s3(bucket_name,access_level,document_details)
+            
+        except Exception as e:
+            return {
+                "message": "Unable to  upload files in the request", "error" : e
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
+
 
 
 @cors_preflight("GET,POST,OPTIONS,PUT")

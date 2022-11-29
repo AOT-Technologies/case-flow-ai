@@ -125,13 +125,13 @@ class SharePoint:
         return properties_list
 
     @classmethod
-    def file_upload_sharepoint(self, SHAREPOINT_FOLDER_NAME, file_name, data, content_type, description, caseID="null"):
-        document = self.upload_file(file_name, SHAREPOINT_FOLDER_NAME, data)
+    def file_upload_sharepoint(self, SHAREPOINT_FOLDER_NAME, document_details, caseID="null"):
+        document = self.upload_file(document_details["doc_name"], SHAREPOINT_FOLDER_NAME, document_details["data"])
         if document.exists:
             response = document.properties
             file_url = document.serverRelativeUrl
-            response["doc_type"] = content_type
-            response["doc_description"] = description
+            response["doc_type"] = (document_details["content_file"]).content_type
+            response["doc_description"] = document_details["doc_description"]
             formatted_document = DMSConnector.doc_upload_connector(response, DMSCode.DMS03.value)
             uploaded_data = DocManageService.doc_upload_mutation(request, formatted_document, caseID)
             print("Upload completed successfully!")
@@ -144,3 +144,16 @@ class SharePoint:
 
         else:
             print("Something went wrong!")
+            
+    @staticmethod
+    def format_document_details(args):
+        content_file = args["upload"]
+        file_name = args["name"]
+        data =content_file.read()
+        return {
+                    "doc_description" : args["description"],
+                    "doc_name" : args["name"],
+                    "content_file" : content_file,
+                    "file_name" : file_name,
+                    "data" : data,
+                }

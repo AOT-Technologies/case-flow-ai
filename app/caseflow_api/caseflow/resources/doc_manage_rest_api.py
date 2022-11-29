@@ -29,11 +29,8 @@ class CMISConnectorUploadResource(Resource):
     upload_parser = reqparse.RequestParser()
     upload_parser.add_argument('upload', location='files',type=FileStorage, required=True)
     upload_parser.add_argument('name', type=str, location='form', required=True)
-    upload_parser.add_argument('cm:description', type=str, location='form', required=True)
-    upload_parser.add_argument('relativePath', type=str, location='form', default = "uploads")
+    upload_parser.add_argument('description', type=str, location='form', required=True)
 
-    
-    
 
     @API.expect(upload_parser)
     @auth.require
@@ -44,31 +41,25 @@ class CMISConnectorUploadResource(Resource):
         cms_repo_url = current_app.config.get("CMS_REPO_URL") 
         cms_repo_username =current_app.config.get("CMS_REPO_USERNAME")  
         cms_repo_password =current_app.config.get("CMS_REPO_PASSWORD") 
+        cms_repo_folder_name = current_app.config.get("CMS_REPO_FOLDER_NAME")
+        args = self.upload_parser.parse_args()
+
 
         if cms_repo_url is None:
             return {
                 "message": "CMS Repo Url is not configured"
             }, HTTPStatus.INTERNAL_SERVER_ERROR
-
-       
-        if "upload" not in request.files:
-            return {"message": "No upload files in the request"}, HTTPStatus.BAD_REQUEST
+   
+        try:
+            url = cms_repo_url + "1/nodes/-root-/children"
+            data = AlfrescoHelper.format_data_rest_api(args,cms_repo_folder_name) 
+            return AlfrescoHelper.file_upload_alfresco(cms_repo_url,cms_repo_username,cms_repo_password,url,data)
         
-        contentfile = request.files["upload"]
-        filename = contentfile.filename
-        files = {'filedata': contentfile.read()}
-        if filename != "":
-            try:
-                url = cms_repo_url + "1/nodes/-root-/children"
-                data = {"file" :files, "form": request.form}
-                return AlfrescoHelper.file_upload_alfresco(cms_repo_url,cms_repo_username,cms_repo_password,url,data)
-            
-            except UpdateConflictException:
-                return {
-                    "message": "Unable to  upload files in the request", "error" : e.message
-                }, HTTPStatus.INTERNAL_SERVER_ERROR
-        else:
-            return {"message": "Unable to  upload files in the request"}, HTTPStatus.BAD_REQUEST
+        except UpdateConflictException:
+            return {
+                "message": "Unable to  upload files in the request", "error" : e.message
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
+
 
             
  
