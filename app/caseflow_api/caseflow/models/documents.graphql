@@ -1,23 +1,24 @@
 type Document {
+  name: String
+  caseid: ID
+  cases: Cases @materializer(query: "getCasesUsingDocument_caseid_fkey")
   content: String
   contentsize: Int
   contenttype: String
+  creationdate: DateTime
   creationuser: String
   description: String
+  dms_provider: Int
+  docname: String
   documentid: String
   downloadurl: String
   id: Int!
+  isdeleted: Boolean
   latestversion: String
   metadata: String
-  modificationuser: String
-  name: String
-  docname: String
-  creationdate: DateTime
   modificationdate: DateTime
-  dms_provider: Int
-  caseid:Int
-
-
+  modificationuser: String
+  versions: [Versions] @materializer(query: "getVersionsUsingVersions_fk")
 }
 
 """
@@ -81,8 +82,8 @@ type Mutation {
     metadata: String!
     contenttype: String!
     dms_provider: Int!
-  caseid:Int
-
+    caseid: Int
+    isdeleted: Boolean
   ): Document
     @dbquery(
       type: "postgresql"
@@ -134,13 +135,31 @@ type Mutation {
         "docname" = COALESCE($10, "docname"),
         "documentid" = COALESCE($11, "documentid"),
         "downloadurl" = COALESCE($12, "downloadurl"),
-        "latestversion" = COALESCE($13, "latestversion"),
-        "metadata" = COALESCE($14, "metadata"),
-        "modificationdate" = COALESCE($15, "modificationdate"),
-        "modificationuser" = COALESCE($16, "modificationuser"),
-        "name" = COALESCE($17, "name")
+        "isdeleted" = COALESCE($13, "isdeleted"),
+        "latestversion" = COALESCE($14, "latestversion"),
+        "metadata" = COALESCE($15, "metadata"),
+        "modificationdate" = COALESCE($16, "modificationdate"),
+        "modificationuser" = COALESCE($17, "modificationuser"),
+        "name" = COALESCE($18, "name")
       WHERE
         "id" = $1
+      RETURNING *
+      """
+      configuration: "postgresql_config"
+      schema: "public"
+    )
+
+  deleteDocumentByCaseId(
+    caseid: ID!
+    isdeleted: Boolean
+  ): Document
+    @dbquery(
+      type: "postgresql"
+      query: """
+      UPDATE "document" SET
+        "isdeleted" = COALESCE($2, "isdeleted")
+      WHERE
+        "caseid" = $1
       RETURNING *
       """
       configuration: "postgresql_config"

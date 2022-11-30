@@ -6,35 +6,36 @@ Column: 'involvedparties'
   DB Type '_int8' is not supported. Column omitted
 """
 type Cases {
+  name: String
   archivedate: Date
+  caseDocuments: [CaseDocuments]
+    @materializer(query: "getCaseDocumentsUsingCaseDocuments_caseid_fkey")
+  caseExtraData: [CaseExtraData]
+    @materializer(query: "getCaseExtraDataUsingCaseExtraData_caseid_fkey")
+  caseNotes: [CaseNotes]
+    @materializer(query: "getCaseNotesUsingCaseNotes_caseid_fkey")
+  caseStatuses: CaseStatuses
+    @materializer(query: "getCaseStatusesUsingCases_statusid_fkey")
+  caseTypes: CaseTypes
+    @materializer(query: "getCaseTypesUsingCases_typeid_fkey")
   completiondate: Date
   creationdate: Date
   currentownerid: ID
   desc: String
+  document: [Document]
+    @materializer(query: "getDocumentUsingDocument_caseid_fkey")
   id: ID!
+  isdeleted: Boolean
   lastmodificationdate: Date
   lobid: String
-  name: String
   penduntildate: Date
+  personUsingCases_currentownerid_fkey: Person
+    @materializer(query: "getPersonUsingCases_currentownerid_fkey")
+  personUsingCases_startuserid_fkey: Person
+    @materializer(query: "getPersonUsingCases_startuserid_fkey")
   startuserid: ID
   statusid: ID
   typeid: ID
-  # caseDocuments: [CaseDocuments]
-  #   @materializer(query: "getCaseDocumentsUsingCaseDocuments_caseid_fkey")
-  # caseExtraData: [CaseExtraData]
-  #   @materializer(query: "getCaseExtraDataUsingCaseExtraData_caseid_fkey")
-  # caseNotes: [CaseNotes]
-  #   @materializer(query: "getCaseNotesUsingCaseNotes_caseid_fkey")
-  # caseStatuses: CaseStatuses
-  #   @materializer(query: "getCaseStatusesUsingCases_statusid_fkey")
-  # caseTypes: CaseTypes
-  #   @materializer(query: "getCaseTypesUsingCases_typeid_fkey")
-  document: [Document]
-    @materializer(query: "getDocumentUsingDocument_caseid_fkey")
-  # personUsingCases_currentownerid_fkey: Person
-  #   @materializer(query: "getPersonUsingCases_currentownerid_fkey")
-  # personUsingCases_startuserid_fkey: Person
-  #   @materializer(query: "getPersonUsingCases_startuserid_fkey")
 }
 
 type Query {
@@ -58,7 +59,7 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" ORDER BY "id" LIMIT $1 OFFSET $2
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "isdeleted", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" ORDER BY "id" LIMIT $1 OFFSET $2
       """
       configuration: "postgresql_config"
     )
@@ -67,7 +68,7 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "id" = $1
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "isdeleted", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "id" = $1
       """
       configuration: "postgresql_config"
     )
@@ -76,7 +77,7 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "id" = $1
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "isdeleted", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "id" = $1
       """
       configuration: "postgresql_config"
     )
@@ -85,7 +86,7 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "id" = $1
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "isdeleted", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "id" = $1
       """
       configuration: "postgresql_config"
     )
@@ -94,7 +95,7 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "currentownerid" = $1
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "isdeleted", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "currentownerid" = $1
       """
       configuration: "postgresql_config"
     )
@@ -103,7 +104,7 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "startuserid" = $1
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "isdeleted", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "startuserid" = $1
       """
       configuration: "postgresql_config"
     )
@@ -112,7 +113,7 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "statusid" = $1
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "isdeleted", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "statusid" = $1
       """
       configuration: "postgresql_config"
     )
@@ -121,7 +122,7 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "typeid" = $1
+      SELECT "archivedate", "completiondate", "creationdate", "currentownerid", "desc", "id", "isdeleted", "lastmodificationdate", "lobid", "name", "penduntildate", "startuserid", "statusid", "typeid" FROM "Cases" WHERE "typeid" = $1
       """
       configuration: "postgresql_config"
     )
@@ -150,6 +151,7 @@ type Mutation {
     desc: String
     typeid: ID
     penduntildate: Date
+    isdeleted: Boolean
   ): Cases
     @dbquery(
       type: "postgresql"
@@ -183,13 +185,32 @@ type Mutation {
         "creationdate" = COALESCE($4, "creationdate"),
         "currentownerid" = COALESCE($5, "currentownerid"),
         "desc" = COALESCE($6, "desc"),
-        "lastmodificationdate" = COALESCE($7, "lastmodificationdate"),
-        "lobid" = COALESCE($8, "lobid"),
-        "name" = COALESCE($9, "name"),
-        "penduntildate" = COALESCE($10, "penduntildate"),
-        "startuserid" = COALESCE($11, "startuserid"),
-        "statusid" = COALESCE($12, "statusid"),
-        "typeid" = COALESCE($13, "typeid")
+        "isdeleted" = COALESCE($7, "isdeleted"),
+        "lastmodificationdate" = COALESCE($8, "lastmodificationdate"),
+        "lobid" = COALESCE($9, "lobid"),
+        "name" = COALESCE($10, "name"),
+        "penduntildate" = COALESCE($11, "penduntildate"),
+        "startuserid" = COALESCE($12, "startuserid"),
+        "statusid" = COALESCE($13, "statusid"),
+        "typeid" = COALESCE($14, "typeid")
+      WHERE
+        "id" = $1
+      RETURNING *
+      """
+      configuration: "postgresql_config"
+    )
+
+  deleteCase(
+  id:ID!
+  isdeleted: Boolean
+  ): Cases
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      UPDATE "Cases" SET
+      "isdeleted" = COALESCE($2, "isdeleted")
+
       WHERE
         "id" = $1
       RETURNING *

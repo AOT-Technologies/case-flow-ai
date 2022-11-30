@@ -74,10 +74,20 @@ class CaseManageHelper :
             return True
         else :
             return False
+
+class CaseManageResulthelper :
+
+    @staticmethod
+    def case_delete_error_message():
+        return {"message": "Failed to delete case",
+            "status": "error"}, HTTPStatus.INTERNAL_SERVER_ERROR
     
-    # @staticmethod
-    # def delete_related_docs(Id):
-    #     version_list = DocManageService.fetchdocumentUsingCaseId(Id)
-    #     for versions in version_list :
-    #         print (versions)
+    @staticmethod
+    def case_delete_sucess_message(delete_case):
+        return {"message": "case is deleted sucessfully",
+                "data" : delete_case['message']['data'],
+                "status": "success"}, HTTPStatus.OK
+
+    
+
 
