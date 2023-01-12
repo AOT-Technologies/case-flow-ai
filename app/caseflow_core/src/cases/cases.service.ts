@@ -21,13 +21,13 @@ export class CasesService {
   ) {}
 
 
-  async findAll({relations:["casehistory","casehistory.event","casehistory.event.eventtype"]},args: FetchArgs = { skip: 0, take: 5 }): Promise<casesResponse> {       
+  async findAll(args: FetchArgs = { skip: 0, take: 5 }): Promise<casesResponse> {       
     const [Cases,totalCount] =await Promise.all([
       this.caseRepository.find(
         {
           take: args.take,
           skip: args.skip,
-        }
+        },
       ),
       this.caseRepository.count()
     ])    
