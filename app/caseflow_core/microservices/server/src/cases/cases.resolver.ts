@@ -5,7 +5,7 @@ import { Args, Int, Mutation, Query, Resolver, ResolveReference } from '@nestjs/
 import { Cases, casesResponse, } from './cases.entity';
 import { CasesService } from './cases.service';
 import { CreateCaseInput } from './dto/create-case.input';
-import { FetchArgs, FetchCaseDocumentArgs } from './dto/fetch.input';
+import { FetchArgs, FetchCaseDocumentArgs, FetchSearchArgs } from './dto/fetch.input';
 import { UpdateCaseInput } from './dto/update-case.input';
 import { HttpException } from '@nestjs/common/exceptions';
 
@@ -29,13 +29,12 @@ export class CasesResolver {
     return output
   }
 
-  @Query((returns) => [Cases] )
+  @Query((returns) => casesResponse )
   Searchcase(
-    @Args('searchField') searchField: string,
-    @Args('searchColumn') searchColumn : string,
-     ): Promise<Cases[]> | HttpException{
+    @Args() args: FetchSearchArgs     
+     ): Promise<any> | HttpException{
 
-    return this.casesService.searchCase(searchField,searchColumn);
+    return this.casesService.searchCase(args.searchField,args.searchColumn,args.skip,args.take);
   }
 
   @Query((returns) => [Cases])

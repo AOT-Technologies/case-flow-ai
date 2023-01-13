@@ -3,8 +3,9 @@ import Search from "../Search";
 import "./cases.scss"
 import CaseList from "../CaseList";
 import {useSelector,useDispatch} from "react-redux";
-import { store } from "../../interfaces/stateInterface";
+import { State, store } from "../../interfaces/stateInterface";
 import { searchCases } from "../../services/CaseService";
+import { setTotalCaseCount } from "../../reducers/newCaseReducer";
 
 const caseListProps = {
   title : "Cases",
@@ -20,21 +21,25 @@ const Cases = (
   const [searchColumn, setSearchColumn] = useState("name");
   const [dropDownArray, setdropDownArray] = useState(['Name', "Description"]);
 
-  const filterDocumentDetails = async () => {
-    let searchResult = await searchCases(searchField,searchColumn)
-    searchResult = searchResult.map((element) => {
+  const dispatch = useDispatch()
+  const selectedPage = useSelector((state:State)=>state.cases.pageSelected)
+
+  const filterDocumentDetails = async () => {    
+    let searchResult = await searchCases(searchField,searchColumn,selectedPage)    
+   let searchResultCases = searchResult.Cases.map((element) => {
       return {...element,status:"Open"};
     });
     
-    if(searchResult)
-    setFilteredCaseDetails(searchResult)
+    if(searchResultCases)
+    setFilteredCaseDetails(searchResultCases)
+    dispatch(setTotalCaseCount(searchResult.totalCount))
   };
 
 
 
   useEffect(() => {
     filterDocumentDetails();
-  }, [searchField,searchColumn]);
+  }, [searchField,searchColumn,selectedPage]);
 
 
   return (
@@ -47,7 +52,7 @@ const Cases = (
             setSearchColumn={setSearchColumn}
           ></Search>
       </div>     
-        <div className="recent-cases"><CaseList  config={caseListProps}    allRecentCases = {filteredCaseDetails}></CaseList></div>
+        <div className="recent-cases"><CaseList  config={caseListProps}    allRecentCases = {filteredCaseDetails}  ></CaseList></div>
         {/* <div className="my-task"><MyTask></MyTask></div> */} 
     </section>
   );

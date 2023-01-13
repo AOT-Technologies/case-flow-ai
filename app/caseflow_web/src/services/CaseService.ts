@@ -144,15 +144,19 @@ import {
   }
 
   
-  export const searchCases = async (searchField,searchColumn) => {
+  export const searchCases = async (searchField,searchColumn,pno) => {    
+    const  skip =(pno-1)*10;     
     const url = GRAPHQL;
-    const  output =  await httpGETRequest(url,{query: print(SEARCH_CASE_LIST),
+    const  output =  await httpPOSTRequest(url,{query: print(SEARCH_CASE_LIST),
       variables: {
         searchField : searchField,
-        searchColumn : searchColumn
+        searchColumn : searchColumn,
+        Skip:skip,
+        Take:Number(PAGINATION_TAKE),
       },
     },null)
-      .then((res) => {return (res.data.data.Searchcase) })
+      .then((res) => {        
+        return (res.data.data.Searchcase) })
       .catch((error) => {
         console.log({"error" : "error loading data"})
         return []

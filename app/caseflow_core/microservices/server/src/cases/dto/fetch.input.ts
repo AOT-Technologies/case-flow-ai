@@ -27,3 +27,21 @@ export class FetchCaseDocumentArgs{
   @Field(()=>Int)
   id
 }
+
+@ArgsType()
+export class FetchSearchArgs {
+  @Field(() => String)  
+  searchField 
+
+  @Field(() => String)  
+  searchColumn 
+
+  @Field(() => Int)
+  @Min(0)
+  skip = 0
+
+  @Field(() => Int)
+  @Min(1)
+  @Max(50)
+  take = 25
+}

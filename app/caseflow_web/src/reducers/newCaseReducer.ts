@@ -15,6 +15,8 @@ caseList : [{
    description :  "" ,
    status : ""
 }],
+  totalCaseCount:0,
+  pageSelected:1,
 };
 
 const caseSlice = createSlice({
@@ -37,6 +39,12 @@ const caseSlice = createSlice({
   setSelectedCaseDocuments: (state, action) => {
     state.selectedCase.documents = action.payload;
 },
+  setTotalCaseCount: (state,action) => {
+    state.totalCaseCount =action.payload;
+},
+  setPageSelected : (state,action) =>{
+    state.pageSelected=action.payload
+},
 
   }
 });
@@ -47,5 +55,7 @@ export const {
   resetSelectedCase,
   setSelectedCaseDocuments,
   setSelectedCaseLOBDetails,
+  setTotalCaseCount,
+  setPageSelected,
 } = caseSlice.actions;
 export default caseSlice.reducer;

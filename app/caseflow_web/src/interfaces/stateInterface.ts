@@ -46,8 +46,10 @@ export type AuthState  = {
   }[];
 
   export interface Cases {
-    selectedCase: SelectedCase
-    caseList: CaseList[]
+    selectedCase: SelectedCase;
+    caseList: CaseList[];
+    totalCaseCount:number;
+    pageSelected:number,
   }
   export interface USerDetails {
     

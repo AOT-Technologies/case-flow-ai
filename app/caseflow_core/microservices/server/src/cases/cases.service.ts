@@ -93,19 +93,21 @@ export class CasesService {
     throw new NotFoundException(`Record cannot find by id ${id}`);
   }
 
-  searchCase(searchField,searchColumn){
+  async searchCase(searchField,searchColumn,skip,take){
     try{
     if(searchColumn){
-      switch(searchColumn){
+      switch(searchColumn){ 
         case 'Description': {
-          return this.caseRepository.createQueryBuilder("table")
-          .where("LOWER(table.desc) LIKE :title", { title: `%${ searchField.toLowerCase() }%` })
-          .getMany();
+          const [Cases,totalCount] =await this.caseRepository.createQueryBuilder("table")
+          .where("LOWER(table.desc) LIKE :title", { title: `%${ searchField.toLowerCase() }%` }).take(take).skip(skip)
+          .getManyAndCount()
+          return  {Cases,totalCount};
         }
         default :
-        return this.caseRepository.createQueryBuilder("table")
-        .where("LOWER(table.name) LIKE :title", { title: `%${ searchField.toLowerCase() }%` })
-        .getMany();
+         const [Cases,totalCount] = await  (this.caseRepository.createQueryBuilder("table")
+        .where("LOWER(table.name) LIKE :title", { title: `%${ searchField.toLowerCase() }%` }).take(take).skip(skip)
+        .getManyAndCount())
+        return {Cases,totalCount}
       }
     }
     else{
