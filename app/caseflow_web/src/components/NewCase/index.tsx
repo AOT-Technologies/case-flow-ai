@@ -119,7 +119,7 @@ const resetCases=()=>{
             id="standard-basic"
             label="Description"
             multiline
-            rows={1}
+            rows={4}
             variant="standard"
             sx={{
               "& .MuiInputLabel-root": { color: "#404040" },
