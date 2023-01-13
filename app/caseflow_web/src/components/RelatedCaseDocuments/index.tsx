@@ -39,13 +39,13 @@ const dispatch = useDispatch()
 const docDetail = useSelector((state:store)=>state.cases.selectedCase.documents);
 
 useEffect(() => {
-  fetchCaseDetails(pageNo);
+  fetchCaseDetails();
 }, [id,pageNo]);
 
 
-  async function fetchCaseDetails(pNo?) {
+  async function fetchCaseDetails() {
     if(id){      
-      let output = await getDocumentofCaseList(id,pNo);
+      let output = await getDocumentofCaseList(id,pageNo);
       const TotalDocCount = output.totalCount;
       const TotalPage = Math.ceil(TotalDocCount/PAGINATION_TAKE) 
       setTotalPageNo(TotalPage);  
@@ -80,7 +80,7 @@ useEffect(() => {
   const deleteDocuments = async (id)=>{
   
       let document = await deleteDocument(id)
-      // fetchCaseDocumentDetails()
+      fetchCaseDetails()
 
   
   }
