@@ -115,7 +115,7 @@ export default function MiniDrawer(
     { key: 5, text: "LOB", path: "/private/lob" },
   ];
   const { pathname } = useLocation();
-  console.log(pathname);
+  const selectedPathName = pathname.split("/").slice(0,3).join("/")  
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
@@ -139,6 +139,7 @@ export default function MiniDrawer(
   const logoutCaseFlowHandler = ( ) =>{
     UserService.userLogout()
   }
+ 
 
   return (     
     <Box >
@@ -180,11 +181,11 @@ export default function MiniDrawer(
                 color: "black",
                 textDecoration: "none",
                 
-              }}
+              }}             
             >
               <ListItem
                 key={index}
-                selected={route.path === pathname}
+                selected={route.path === selectedPathName}
                 disablePadding
                 sx={{ display: "block" }}
               >
