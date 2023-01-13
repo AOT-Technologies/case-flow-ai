@@ -39,22 +39,17 @@ const dispatch = useDispatch()
 const docDetail = useSelector((state:store)=>state.cases.selectedCase.documents);
 
 useEffect(() => {
-  fetchCaseDetails(pageNo);
+  fetchCaseDetails();
 }, [id,pageNo]);
 
 
-  async function fetchCaseDetails(pNo) {
-    if(id){
-      let output = await getDocumentofCaseList(id,pNo);
-
+  async function fetchCaseDetails() {
+    if(id){      
+      let output = await getDocumentofCaseList(id,pageNo);
       const TotalDocCount = output.totalCount;
       const TotalPage = Math.ceil(TotalDocCount/PAGINATION_TAKE) 
-      setTotalPageNo(TotalPage);
-      console.log(output.CaseDocuments)
-      // setdocDetail([])
-      dispatch(setSelectedCaseDocuments(output.CaseDocuments))
-      
-      // console.log(docDetail)
+      setTotalPageNo(TotalPage);  
+      dispatch(setSelectedCaseDocuments(output.CaseDocuments))      
     }
   }
   const options = [{id :0,text : '...'},
@@ -85,7 +80,7 @@ useEffect(() => {
   const deleteDocuments = async (id)=>{
   
       let document = await deleteDocument(id)
-      fetchCaseDocumentDetails()
+      fetchCaseDetails()
 
   
   }
@@ -103,9 +98,9 @@ useEffect(() => {
 
   
 
-  useEffect(() => {
-    fetchCaseDocumentDetails();
-  }, [id]);
+  // useEffect(() => {
+  //   fetchCaseDocumentDetails();
+  // }, [id]);
 
 
 
@@ -123,7 +118,7 @@ useEffect(() => {
   }
   return (    
     <TableContainer component={Paper} sx={{ boxShadow : 0,}} >
-    {docDetail.length!==0 ?  <Table sx={{ minWidth: 650 ,border : 0,}} aria-label="simple table" className="case-document-table" >
+    {docDetail && docDetail.length!==0 ?  <Table sx={{ minWidth: 650 ,border : 0,}} aria-label="simple table" className="case-document-table" >
         <TableHead >
           <TableRow>
             <TableCell  sx={{ color: '#606060',fontWeight: 'bold',fontSize: 16,border:0}} >Name</TableCell>
