@@ -21,7 +21,7 @@ In the following document, we’ll describe about the different project dependen
 ## Individual Service Deployment
 - ### caseflow_idm(Keycloak)
     - Make sure you have a Docker machine up and running.. 
-    - Make sure your current working directory is cd {Your Directory}/caseflow-poci/caseflow-idm
+    - Make sure your current working directory is cd {Your Directory}/case-flow-ai/app/caseflow-idm
     #### To start Keycloak server     
     - Run  `docker-compose up -d to start.`
     
@@ -47,130 +47,114 @@ In the following document, we’ll describe about the different project dependen
     ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/passwordset.png)
     
 
-- ### caseflow-dms(Alfresco)
-    Make sure your current working directory is cd {Your Directory}/caseflow-poc/caseflow-dms
+- ### caseflow-dms
+    Make sure your current working directory is cd {Your Directory}/case-flow-ai/app/caseflow-dms
     
-   #### To start the Alfresco in local
+    Make sure you are adding the below changes in app.module, for enabling graphql playground at port:7002 where you can test dms server queries and mutations 
+    
+    ```sh
+    introspection:true,
+    playground:true
+  ```
+   
+    
+    ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/dev/.images/caseflow-dms-setting.png)
+    
+    NOTE: You should revert the changes before pushing the code for build
+    
+   #### To start the caseflow-dms server in local
     - Run `docker-compose up -d` to start
 
-        ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/dms.png)
-    #### To stop the Alfresco server
+        ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/dev/.images/dms-docker-compose.png)
+    #### To stop the caseflow-dms server
     - Run `docker-compose stop` to stop.    
 
-        The application should be up and available for use in http://localhost:8080/
-    
-        #### Login Credentials : 
-            Username : admin
-            Password : admin
-
-        ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/alfresco.png)
-
-
-
-- ### Stepzen Integration
-    1.Create an account on [StepZen](https://stepzen.com/)
-
-    2.Follow the instructions on [Stepzen Getting Started](https://stepzen.com/getting-started) page
-
-    2.Make sure your current working directory is cd {Your Directory}/caseflow-poc/caseflow-api/caseflow and run following commands in the terminal.
-
-    3.Run the command  `stepzen login` ( using the [account]( https://dashboard.stepzen.com/account) )
-
-
-
-    4.Enter the following command  
-
-    ```bash
-    stepzen deploy
-    stepzen start (To check the Query and mutations)
-    ``` 
-    ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/stepzen1.png)
-    ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/stepzen2.png)
-
-
-
-
-    5.Stepzen user interface will be available on http://localhost:5001/
-
-
-
-- ### caseflow-api(Python Flask Api) 
-    You can install it through locally or docker
-
-    Make sure your current working directory is cd {Your Directory}/caseflow-poc/caseflow-api      
-    Make sure the following stepzen configurations steps are correct.
-
+        The application should be up and available for use in http://localhost:7002/graphql
    
 
-    1.Copy the stepzen endpoint and update STEPZEN_ENDPOINT_URL in the .env file 
+        ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/dev/.images/case-flow-dms-playground.png)
+        
+        
+ 
+ 
+- ### caseflow-core (NestJS server)
+    
+    Make sure your current working directory is cd {Your Directory}/case-flow-ai/app/caseflow-core
+    
+    Make sure you are adding the below changes in app.module, for enabling graphql playground at port:7001 where you can test core server queries and mutations 
+    
+     ```sh
+    introspection:true,
+    playground:true
+  ```
+    
+    ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/dev/.images/caseflow-core-setting.png)
+    
+    NOTE: You should revert the changes before pushing the code for build
+    
+   #### To start the caseflow-core server in local
+    - Run `docker-compose up -d` to start
 
-    2.Copy the API Key from stepzen [Account](https://dashboard.stepzen.com/account) and update   STEPZEN_API_KEY  in the .env file
+        ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/dev/.images/caseflow-core-docker-compose.png)
+    #### To stop the caseflow-dms server
+    - Run `docker-compose stop` to stop.    
 
-    ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/stepzen-env-config.png)
-    ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/stepzen-api-auth.png)
-    ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/stepzen-endpoint-url.png)
+        The application should be up and available for use in http://localhost:7001/graphql
    
 
-    3.To make this database available to other services outside your private network, you need to create a TCP tunnel. For this ngrok will be used:
+        ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/dev/.images/caseflow-core-7001-graphql.png)
+        
+        
+   
+   
+- ### gateway-service
 
-    Download [ngrok](https://ngrok.com/)
-
-    Run ngrok 
-
-    ```bash
-    ngrok tcp [postgres port number]
-    ```
-
-    ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/ngrok.png)
+   
+    Make sure your current working directory is cd {Your Directory}/case-flow-ai/app/gateway-service
     
-
-    Ngrok will return the forwarding address for the local PostgreSQL database, which will looks something like this: tcp://0.tcp.ngrok.io:15650.
-
-    Update base posgres URL with the ngrok URL
-
-    4. make sure the Config.yml file is updated(caseflow-poc -> caseflow-api -> caseflow ->config.yaml)
-
-    ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/stepzen-config.png)
+    Make sure you are adding the below changes in app.module, for enabling graphql playground at port:7000 where you can test dms server queries and mutations 
     
-
- #### To start the caseflow-api in Docker
-
-- Run `docker-compose up -d` to start
+     ```sh
+    introspection:true,
+    playground:true
+  ```
     
-
-    ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/case-flow-api-python.png)
-
+    ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/dev/.images/caseflow-gateway-setting.png)
     
-- Modify the environment variable in .env
-
-NOTE: Use --build command with the start command to reflect any future .env / code changes eg :` docker-compose up --build -d`
-
-Enter the following command in terminal for deploy the db connection changes(stepzen update the config.yaml)
-
-stepzen deploy
-
-stepzen start (To check the Query and mutations)
-
-#### To stop the caseflow-api server
-- Run `docker-compose stop` to stop. 
-
-The application should be up and available for use at port defaulted to 5000 in http://localhost:5000/
-
-  ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/case-flow-api-port5000.png)
+    NOTE: You should revert the changes before pushing the code for build
     
+   #### To start the gateway-service in local
+    - Run `docker-compose up -d` to start
+
+        ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/dev/.images/casflow-gateway-service-docker-compose.png)
+    #### To stop the gateway-service
+    - Run `docker-compose stop` to stop.    
+
+        The application should be up and available for use in http://localhost:7000/graphql
+   
+
+        ![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/dev/.images/caseflow-7000-playground.png)
 
 
 
 
+- ### caseflow-web(React Application)
 
+   Modify the environment variable in .env
 
-- ## caseflow-web(React Application)
+   Make sure you are pointing to locally hosted server in .env
 
-Make sure your current working directory is `cd {Your Directory}/caseflow-poc/caseflow-web`
+     ```sh  
+    #caseflow web Api End point 
+    REACT_APP_CASEFLOW_API_URL=http://localhost:7001
+    REACT_APP_CASEFLOW_GRAPHQL_API_URL=http://localhost:7000    
+  ``` 
+
+Make sure your current working directory is `cd {Your Directory}/case-flow-ai/app/caseflow-web`
 
 #### Run the following command in terminal
 
-- Modify the environment variable in .env
+
 - Run `docker-compose up -d` to start
 
 NOTE: Use --build command with the start command to reflect any future .env / code changes eg :` docker-compose up --build -d`
@@ -183,13 +167,9 @@ NOTE: Use --build command with the start command to reflect any future .env / co
 
 The application should be up and available for use at port defaulted to 3000 in http://localhost:3000/
 
-Go to http://localhost:3000/private/upload for file upload
 
-![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/web-login-page.png)
-![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/upload%20success.png)
+![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/dev/.images/caseflow-web-starting-page.png)
 
-![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/update.png)
-![App Screenshot](https://github.com/AOT-Technologies/case-flow-ai/blob/staging/development/.images/downloads.png)
 
 
 
