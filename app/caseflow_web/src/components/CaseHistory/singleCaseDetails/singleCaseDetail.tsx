@@ -3,16 +3,9 @@ import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRound
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import "./SingleCaseDetail.scss"
 
-interface singleCaseDetailProps{
-    id:Number,
-    description:String,
-    notes:String,
-    tasks:any,
-    documents:any,
-    date:any
-}
 
-const SingleCaseDetail = ({id,description,notes,tasks,documents,date}:singleCaseDetailProps) => {
+
+const SingleCaseDetail = ({caseHisoryData}) => {
     // const docDate =  {
     //     id:1,
     //     description:"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
@@ -29,20 +22,20 @@ const SingleCaseDetail = ({id,description,notes,tasks,documents,date}:singleCase
     }
   return (
     <div className='case-grid-container'>
-        <span className='case-grid-date'>{date}</span>
+        <span className='case-grid-date'>{caseHisoryData.date}</span>
         <span className='case-grid-line'><span className="case-grid-line-ball"></span></span>
         <div className='case-gird-details'>
-            <h3 onClick={expandDetailhandler} className="case-gird-details-header"><span>Description</span>
+            <h3 onClick={expandDetailhandler} className="case-gird-details-header"><span>{caseHisoryData.caseHistoryType}</span>
            {expand ? <KeyboardArrowUpRoundedIcon/>:<KeyboardArrowDownRoundedIcon/>}
             </h3>
             {expand && <div>
-                <p>{description}</p>
-                <h3>Notes</h3>
+                <p>{caseHisoryData.caseHistoryType}</p>
+                {/* <h3>Notes</h3>
                 <p>{notes}</p>
                 <h3>Tasks</h3>
                 {tasks.map((task:any)=><p>{task}</p>)}
                 <h3>Document</h3>
-                <p>{documents}</p>
+                <p>{documents}</p> */}
             </div>
 
             }
