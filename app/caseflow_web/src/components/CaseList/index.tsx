@@ -78,7 +78,7 @@ const CaseList =React.memo( ({config,allRecentCases}:any) => {
       return {
         id :element.id,
         name:element.name,
-        description:element.desc,
+        desc:element.desc,
         status:'open'    //need to change in future
       };
     });
