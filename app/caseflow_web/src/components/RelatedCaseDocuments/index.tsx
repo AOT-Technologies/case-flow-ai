@@ -39,6 +39,7 @@ const dispatch = useDispatch()
 const docDetail = useSelector((state:store)=>state.cases.selectedCase.documents);
 
 useEffect(() => {
+  console.log("inside");
   fetchCaseDetails();
 }, [id,pageNo]);
 
@@ -132,14 +133,14 @@ useEffect(() => {
         <TableBody>
           {docDetail.map((row:any,index) => (
             <TableRow
-              key={row.id}
+            
+            >
+              <TableCell   key={row.id}
               sx={{  border: 0 }}
               onClick={()=>{
                 previewDocument(row.id,row.type)
               }
-              }
-            >
-              <TableCell   style={{borderBottom: "none"}} component="th" scope="row">{row.name}</TableCell>
+              }  style={{borderBottom: "none"}} component="th" scope="row">{row.name}</TableCell>
               <TableCell style={{borderBottom: "none"}} align="right">{row.size ? row.size : "1kb"}</TableCell>
               <TableCell style={{borderBottom: "none"}} align="right">{row.creationdate}</TableCell>
               <TableCell style={{borderBottom: "none"}} align="right">{row.creationdate}</TableCell>
