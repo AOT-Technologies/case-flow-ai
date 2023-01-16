@@ -5,7 +5,7 @@ import CaseDetailReference from "./CaseDetailReference/CaseDetailReference";
 import "./CaseDetails.scss";
 import Search from "../Search";
 import CaseHistory from "../CaseHistory/caseHistory";
-import { getCaseDetails, getCaseHistory } from "../../services/CaseService";
+import { getCaseDetails } from "../../services/CaseService";
 import { useLocation } from 'react-router-dom'
 import RelatedCaseDocuments from "../RelatedCaseDocuments";
 import Accordion from '@mui/material/Accordion';
@@ -19,6 +19,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { setSelectedCase } from "../../reducers/newCaseReducer";
 import {useDispatch} from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setCaseHistory } from '../../reducers/caseHistoryReducer';
+import { getCaseHistory } from '../../services/CaseService';
 
 
 const CaseDetails = () => {
@@ -47,15 +49,26 @@ const CaseDetails = () => {
     var matches = location.pathname.match(/(\d+)/);
     if(matches && matches[0]){
       let output = await getCaseDetails(matches[0]);
-      let caseHistory = await getCaseHistory(matches[0]);
       dispatch(setSelectedCase({...output,isEdit:false}));
       setselectedCaseDetails(output)
-      setCaseHistory(caseHistory)
+      await fetchCaseHistory(matches[0])
     }
   }
+    async function fetchCaseHistory(id) {    
+    const caseHistoryData = await getCaseHistory(id);
+    console.log(caseHistoryData,"caseHistoryData")
+    const output = caseHistoryData.casehistory.map((element,index) => {
+      return {  
+        id :index,
+        date:element.datetime.split("T")[0],
+        caseHistoryType:element.event.eventtype.text,
+      };
+    });
+
+    dispatch(setCaseHistory(output))
+  } 
   
 const [selectedCase, setselectedCaseDetails]:any = useState({});
-const [caseHistory,setCaseHistory]:any = useState();
 const [isOpenPopup,setOpenPopup] = useState(false);
   const [selected, setSelected] = useState(0);
   const handleClose = (
@@ -104,7 +117,7 @@ const [isOpenPopup,setOpenPopup] = useState(false);
           <div className="case-id-status">
             <p className="case-id">Case ID :{selectedCase.id}</p>
             <p className="case-status">{caseDetail.status}</p>
-          <div onClick={()=>{editCaseDetails(selectedCase)}}>  
+          <div className="case-edit" onClick={()=>{editCaseDetails(selectedCase)}}>  
           <span className="action-icon"> {<EditIcon />}</span>
               </div>
            
@@ -120,7 +133,7 @@ const [isOpenPopup,setOpenPopup] = useState(false);
           name={selectedCase.name}
           date={caseDetail.date}
           owner={caseDetail.status}
-          caseDescription={selectedCase.description}
+          caseDescription={selectedCase.desc}
           tasks={caseDetail.tasks}
         />
         {(selectedCase && selectedCase.id) ? <CaseDetailReference
@@ -144,7 +157,7 @@ const [isOpenPopup,setOpenPopup] = useState(false);
       
       </section>
       <section className="case-history-container">
-        <CaseHistory casehistory = {caseHistory}></CaseHistory>
+        <CaseHistory  caseId = {selectedCase.id}></CaseHistory>
       </section>
     </div>
     <CustomizedDialog title="Upload File" isOpen={isOpenPopup} setIsOpen={setOpenPopup} handleClose={handleClose}><Upload onSuccess={handleClose} /></CustomizedDialog>

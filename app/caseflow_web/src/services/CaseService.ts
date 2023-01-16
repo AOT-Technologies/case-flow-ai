@@ -52,9 +52,10 @@ import {
     return httpPOSTRequest(url,{query: print(UPDATE_CASE),
       variables: {
         updateCaseInput: {
-          id:newCase.id,
+          id:parseInt(newCase.id.toString()),
           name: newCase.name,
-          statusid: newCase.statusid,
+          statusid: 1,
+          desc:newCase.desc
         },
       },
     },null)
@@ -135,7 +136,7 @@ import {
         CaseId : parseInt(id),
       },
     },null)
-      .then((res)=>{return res.data.data})
+      .then((res)=>{return res.data.data.getCase})
       .catch(error=>{
         console.log({"error":error})
         return {}

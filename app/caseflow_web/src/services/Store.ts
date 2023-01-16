@@ -6,6 +6,8 @@ import authReducer from "../reducers/authReducer";
 import documentsReducer  from "../reducers/documentsReducer"
 import applicationReducer from "../reducers/applicationReducer";
 import caseReducer from "../reducers/newCaseReducer";
+import caseHistoryReducer from "../reducers/caseHistoryReducer";
+
 
 const { createReduxHistory, routerMiddleware, routerReducer } =
   createReduxHistoryContext({ history: createBrowserHistory() });
@@ -16,7 +18,8 @@ export const store = configureStore({
     auth : authReducer,
     documents : documentsReducer,
     app: applicationReducer,
-    cases:caseReducer
+    cases:caseReducer,
+    caseHistory:caseHistoryReducer
   }),
   middleware: [routerMiddleware],
 });

@@ -1,37 +1,28 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import SingleCaseDetail from './singleCaseDetails/singleCaseDetail'
 import "./caseHistory.scss"
 import FilterMuiComponent from '../FilterMuiComponent/FilterMuiComponent';
+import { setCaseHistory } from '../../reducers/caseHistoryReducer';
+import {useDispatch,useSelector} from "react-redux";
+import { getCaseHistory } from '../../services/CaseService';
 
 
-const CaseHistory = ({casehistory}) => {
 
-    const caseHistoryData = [
-        {
-            id:1,
-            description:"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
-            notes:"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy.",
-            date:"2022-11-01 14:37",
-            tasks:["Task 01","Task 02"],
-            documents:"Document.pdf"
-        },
-        {
-            id:2,
-            description:"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
-            notes:"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy.",
-            date:"2022-11-01 14:38",
-            tasks:["Task 01","Task 02"],
-            documents:"Document.pdf"
-        },
-        {
-            id:3,
-            description:"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
-            notes:"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy.",
-            date:"2022-11-01 14:37",
-            tasks:["Task 01","Task 02"],
-            documents:"Document.pdf"
-        },
-    ]
+
+const CaseHistory = ({caseId}) => {
+
+  const dispatch = useDispatch();
+
+  const selectedCase = useSelector((state:any) => state.cases.selectedCase);
+  const selectedCaseHistory = useSelector((state:any) => state.caseHistory.caseHistory);
+
+
+
+
+
+
+
+
 
     const optionsForFilter = ["name","date","owner"]
     const onFilterChangehandler = (e:any) =>{
@@ -44,15 +35,11 @@ const CaseHistory = ({casehistory}) => {
         <div className='case-history-header-name'>Case History</div>       
         <FilterMuiComponent label="Filter" options={optionsForFilter} onChnagehandler={onFilterChangehandler} />
       </header>
-      {caseHistoryData.map(singleCase =>{
+      {selectedCaseHistory.map(singleCaseHistory =>{
        return <SingleCaseDetail
-        key={singleCase.id}
-        id={singleCase.id}
-        description={singleCase.description}
-        notes={singleCase.notes}
-        tasks={singleCase.tasks}
-        documents={singleCase.documents}
-        date={singleCase.date}
+        key={singleCaseHistory.id}
+        caseHisoryData = {singleCaseHistory}
+
 
          />
       })}
