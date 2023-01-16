@@ -112,7 +112,7 @@ const resetCases=()=>{
         </Grid>
         <Grid item xs={8}>
         <Controller
-        name={"description"}
+        name={"desc"}
         control={control}
         render={({ field: { onChange, value } }) => (
           <TextField
