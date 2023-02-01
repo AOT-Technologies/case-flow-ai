@@ -1,4 +1,4 @@
-import { Body,Headers , Controller, Post, UploadedFile, UseInterceptors,Delete, Get, Patch,NotFoundException, Put } from '@nestjs/common';
+import { Body,Headers , Controller, Post, UploadedFile, UseInterceptors,Delete, Get, Patch,NotFoundException, Put, Query } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -86,17 +86,18 @@ export class DocumentsController {
     }
   }
 
-  @Delete()
-  @MessagePattern({ cmd: 'delete_document' })
-  async DeleteDocument(param) {
+  // for delete documents
+  @Post('/deleteDocument')
+  @UseInterceptors(FileInterceptor('file'))
+  async DeleteDocument(@Body() body,@Query() param,@Headers () auth,) {
     try {
-      let field = await this.documentService.findOne(parseInt(param.id));
+      let field = await this.documentService.findOne(parseInt(body.id));
       field.isdeleted = true;
-      let documentDetails = await this.documentService.findOne(parseInt(param.id));
+      let documentDetails = await this.documentService.findOne(parseInt(body.id));
       let dms = await documentDetails.dmsprovider;
       return this.fileService.deleteFile(field,dms).then(
         () => {
-          return this.documentService.update(param.id, field);
+          return this.documentService.update(body.id, field);
         },
       );
     } catch (error) {
