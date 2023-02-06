@@ -1,0 +1,61 @@
+version: "3.7"
+
+services:
+  caseflowdms-db:
+    image: postgres:13
+    container_name: database
+    environment:
+      POSTGRES_USER: ${POSTGRES_DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_DB_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DATABASE:-caseflow_dms}
+    ports:
+        - 5433:5432
+    restart: unless-stopped
+    volumes:
+      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+    networks:
+      - case-flow-dmsapi-network
+
+
+  caseflow-microservice:
+    container_name: caseflow-microservice
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+        - KEYCLOCK_CLIENT_ID=${KEYCLOCK_CLIENT_ID:-case-flow-nest}
+        - KEYCLOCK_REALM=${KEYCLOCK_REALM:-caseflow}
+        - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+        - KEYCLOCK_AUTH_URL=${KEYCLOCK_AUTH_URL:-https://caseflow-idm.aot-technologies.com:8443/auth}
+        - KEYCLOCK_SECRET=${KEYCLOCK_SECRET}
+
+
+        - POSTGRESQL_HOST=${POSTGRESQL_HOST}
+        - POSTGRESQL_PORT=${POSTGRESQL_PORT}
+        - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+        - POSTGRES_DB_USERNAME=${POSTGRES_DB_USERNAME}
+        - POSTGRES_DB_PASSWORD=${POSTGRES_DB_PASSWORD}
+
+        - AWS_REGION=${AWS_REGION}
+        - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+        - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+        - AWS_BUCKET_NAME=${AWS_BUCKET_NAME:-caseflow-dms}
+
+        - ALFRESCO_REPO_URL=${ALFRESCO_REPO_URL:-http://caseflow-alfresco.aot-technologies.com:8080/alfresco/api/-default-/public/alfresco/versions}
+
+        - SHAREPOINT_CLIENT_ID=${SHAREPOINT_CLIENT_ID}
+        - SHAREPOINT_CLIENT_SECRET=${SHAREPOINT_CLIENT_SECRET}
+        - SHAREPOINT_RESOURCE=${SHAREPOINT_RESOURCE}
+
+
+    ports:
+      - "7002:7002"
+      - "7003:7003"
+    tty: true
+    networks:
+      - case-flow-dmsapi-network
+
+networks:
+  case-flow-dmsapi-network:
+    driver: 'bridge'

@@ -1,7 +1,9 @@
 import {
   httpGETBolbRequest,
   httpGETRequest,
-  httpDELETERequest
+  httpDELETERequest,
+  httpPOSTRequest,
+  httpPUTRequest
 
 } from "../apiManager/httpRequestHandler";
 import {API, GRAPHQL} from "../apiManager/endpoints";
@@ -55,22 +57,41 @@ export const  getDocument = async (id) => {
   return data;
 }
 
-
+// function for soft  delete documents
 export const  deleteDocument = async (id) => {
-  const url = API.DMS_API + "?id=" + id;
-  const data = await httpDELETERequest(url,null)
-  .then((res) => {return res})
-  .catch((error) => {
-    if (error?.response?.data) {
-      return({"error" : error})
-    } else {
-      return({"error" : "something went wrong"})
+  const uploadURL = API.DMS_API+"delete";
+  let bodyFormData = new FormData(); 
+  bodyFormData.append('id', id);
+  console.log(bodyFormData)
+  try{
+    let response = await httpPUTRequest(uploadURL,bodyFormData,null);
+    return response;
+  }
+  catch(err){
+    return err;
+  }
 
-    }
-  })
+
+  // const url = API.DMS_API + "?id=" + id;
+  // const data = await httpDELETERequest(url,null)
+  // .then((res) => {return res})
+  // .catch((error) => {
+  //   if (error?.response?.data) {
+  //     return({"error" : error})
+  //   } else {
+  //     return({"error" : "something went wrong"})
+
+  //   }
+  // })
   
-  return data;
+  // return data;
 }
+
+
+
+
+
+
 
 export const searchCaseDocument= async (searchField,searchColumn) => {
   const url = GRAPHQL;

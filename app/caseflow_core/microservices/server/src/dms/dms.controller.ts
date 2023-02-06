@@ -18,13 +18,14 @@ import { HttpException } from '@nestjs/common/exceptions';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express, Response as ExpressResponse } from 'express';
 import axios, {AxiosResponse} from 'axios'
+import { ConfigService} from '@nestjs/config';
 
 //_____________________Custom Imports_____________________//
 import { DmsService } from './dms.service';
 
 @Controller('dms')
 export class DmsController {
-  constructor(private readonly dmsService: DmsService) {}
+  constructor(private readonly dmsService: DmsService,private readonly configService: ConfigService) {}
   // @Get()
   // getDocument(): string {
   //   return this.dmsService.getDocument();
@@ -36,7 +37,7 @@ export class DmsController {
     @UploadedFile() file: Express.Multer.File, @Body() body,@Headers() headers,@Response() res: ExpressResponse
   ): Promise<any> {
     try{
-    const url = "http://35.182.42.147:7002/documents/uploadDocument"
+    const url = this.configService.get('CASEFLOW_DMS_API_URL')+"/documents/uploadDocument"
     var FormData = require("form-data");
     const formData = new FormData();
     const headersRequest = {
@@ -75,8 +76,23 @@ export class DmsController {
 
           return res.send(new Buffer(document.data));
     }
-    @Delete()
-    async deleteDocument(@Query() param,@Headers() headers): Promise<any>   {
-      return this.dmsService.deleteDocument(param,headers);
+    // for delete documents
+    @Put('/delete')
+    @UseInterceptors(FileInterceptor('file'))
+    async deleteDocument(@Body() body,@Headers() headers,@Response() res: ExpressResponse): Promise<any>   {
+      try {
+        const url = this.configService.get('CASEFLOW_DMS_API_URL')+'/documents/deleteDocument';
+        const headersRequest = {
+          'Content-Type': 'multipart/form-data',
+          Authorization: headers.authorization,
+        };
+        await axios
+          .post(url, body, { headers: headersRequest })
+          .then((response) => {
+            return res.send(response.data);
+          });
+      } catch (error) {
+        console.log(error.message);
+      }
     }
 }
