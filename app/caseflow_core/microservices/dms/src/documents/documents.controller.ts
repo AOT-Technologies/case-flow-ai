@@ -15,20 +15,22 @@ export class DocumentsController {
     private helper: TransformService,
     private documentService: DocumentsService,
   ) {}
+
+  //for upload documents
+
   @Post('/uploadDocument')
-  // @MessagePattern({ cmd: 'create_document' })
    @UseInterceptors(FileInterceptor('file'))
   async uploadDocument(
     @UploadedFile() file: Express.Multer.File,@Body() body,@Headers () auth) {
       try {
-    let documentDetails = await this.fileService.uploadFile(file, body, body.dmsprovider,auth.authorization);
-    let formattedDocument: any = this.helper.transform(
-      body.dmsprovider,
-      'CREATE',
-      documentDetails,
-      body,
-    );
-    return this.documentService.createDocument(formattedDocument);
+      if(body && body?.dmsprovider && auth?.authorization){    
+        const documentDetails = await this.fileService.uploadFile(file, body, body?.dmsprovider,auth?.authorization);
+        const formattedDocument: any = await this.helper.transform(body?.dmsprovider,'CREATE',documentDetails,body);
+        return this.documentService.createDocument(formattedDocument);
+      }
+      else{
+        console.log("Request body/header Not provided");
+      }
   } catch (err) {
     console.log(err.message);
   }
@@ -45,7 +47,7 @@ export class DocumentsController {
           ? this.fileService.updateFile(data.file, data,document, data.dmsprovider,)
           : null);
         let formattedDocument: any = this.helper.transform(
-          data.dmsprovider,
+          data?.dmsprovider,
           'UPDATE',
           documentDetails,
           data,

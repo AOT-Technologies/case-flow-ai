@@ -12,6 +12,9 @@ export class AmazonS3Service {
   });
   private readonly bucket = this.configService.get('AWS_BUCKET_NAME');
 
+  // summery : Fetch File from  S3
+  // Created By : Don C Varghese
+
   async getDocument(documentId: string): Promise<any> {
     try {
       let data = await this.s3.getObject(
@@ -27,8 +30,8 @@ export class AmazonS3Service {
   // summery : Upload File to S3
   // Created By : Don C Varghese
   async uploadDocument(data: any, fileName: string): Promise<any> {
+    try{
     let base64data = new Buffer(data.buffer, 'binary');
-
     return await this.s3
       .upload({
         Bucket: this.bucket,
@@ -36,8 +39,13 @@ export class AmazonS3Service {
         Key: `${uuid()}-${fileName}`,
       })
       .promise();
+    } catch (err) {
+      console.log(err);
+    }
   }
 
+  // summery : Delete  File from  S3
+  // Created By : Don C Varghese
   async deleteDocument(documentId: string): Promise<any> {
     try {
       let data = await this.s3.deleteObject(

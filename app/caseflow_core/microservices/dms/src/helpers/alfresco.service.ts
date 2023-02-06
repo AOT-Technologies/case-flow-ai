@@ -10,28 +10,21 @@ const FormData = require('form-data');
 export class AlfrescoService {
   constructor(private readonly configService: ConfigService,private readonly httpService: HttpService) {}
 
-  // Summary : Upload File to S3
+  // Summary : Upload File to Alfresco
   // Created By : Don C Varghese
   async uploadDocument(file: any, data: any,token:string):  Promise<any>  {
    console.log(file,data);
-   let body = this.mapAlfrescoForm(file,data)
+   let body = await this.mapAlfrescoForm(file,data)
    const headersRequest = {
     'Content-Type': 'multipart/form-data',
     "Authorization": token ,
 };
-
-   console.log(body);
-   const auth = {
-    username: 'admin',
-    password: 'admin'
-  }
     const url = this.configService.get('ALFRESCO_REPO_URL') + "/1/nodes/-root-/children"
     try{
       let response = await firstValueFrom(this.httpService.post(url,body,{
         headers : headersRequest
       
       }));
-      console.log("response",response)
       return response.data;
     }
     catch(err){
@@ -41,7 +34,7 @@ export class AlfrescoService {
    
   }
 
-  // Summary : Upload File to S3
+  // Summary : Upload File to Alfresco
   // Created By : Don C Varghese
   async updateDocument(file: any,documnet : any,data: any,token:string):  Promise<any>  {
    console.log(file,data);
@@ -50,11 +43,6 @@ export class AlfrescoService {
     "Authorization": token ,
 };
 
-   console.log(body);
-   const auth = {
-    username: 'admin',
-    password: 'admin'
-  }
     const url = this.configService.get('ALFRESCO_REPO_URL') + "/1/nodes/" + documnet.documentref + '/content'
   const params =  {
     "name" : data.name,
@@ -117,26 +105,21 @@ export class AlfrescoService {
     
   }
 
-  // Summary : Upload File to S3
+  // Summary : Map Alfresco details
   // Created By : Don C Varghese
   mapAlfrescoForm(file,data) {
-    let fileData = new Buffer(file.buffer ? file.buffer : file)
-  //   const form = new FormData( { 
-  //   'name' : data.name,
-  //   'nodeType': 'cm:content',
-  //   'cm:title' : data.name,
-  //   'cm:description' : data.desc,
-  //   'relativePath' : this.configService.get('ALFRESCO_RELATIVE_PATH'),
-  //   'filedata' : fileData,
-   
-  // });
-  const form = new FormData();
-form.append('filedata', fileData, data.name);
-form.append('name', data.name);
-form.append('nodeType', 'cm:content');
-form.append('cm:title', data.name);
-form.append('cm:description', data.desc);
-form.append('relativePath', this.configService.get('ALFRESCO_RELATIVE_PATH'))
-    return form;
+    try{
+      let fileData = new Buffer(file.buffer ? file.buffer : file)
+      const form = new FormData();
+      form.append('filedata', fileData, data?.name);
+      form.append('name', data?.name);
+      form.append('nodeType', 'cm:content');
+      form.append('cm:title', data?.name);
+      form.append('cm:description', data?.desc);
+      form.append('relativePath', this.configService.get('ALFRESCO_RELATIVE_PATH'))
+      return form;
+  } catch (err) {
+    console.log(err);
+  }
   }
 }

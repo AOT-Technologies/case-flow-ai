@@ -14,15 +14,13 @@ import { map, tap } from 'rxjs/operators';
 export class SharepointServices{
     constructor(private readonly configService: ConfigService,private readonly httpService:HttpService){}
 
+  // Summary : Update File to Sharepoint
+  // Created By :Gokul VG
    async uploadDocument(file,fileName):Promise<any>{  
             const spURL = `https://aottech.sharepoint.com/sites/Caseflow/_api/web/GetFolderByServerRelativeUrl('/sites/Caseflow/Caseflow')/Files/Add(url='${fileName}', overwrite=true)`
-           
             try {     
-
-             
                 const accessToken =await this.getAccessToken(); 
                 const FormDigestValue= await this.getFormDigestValue()  
-
                 const responseUpload = await firstValueFrom(this.httpService.post(spURL,file,{
                     maxBodyLength:Infinity,
                     maxContentLength:Infinity,                    
@@ -31,16 +29,14 @@ export class SharepointServices{
                         'X-RequestDigest': `${FormDigestValue}`
                     }
                 }))
-
-                console.log(responseUpload)
-                
               return responseUpload.data    
             } catch (e) {
               console.log(e)
             }         
     }    
 
-
+  // Summary : fetch  File from Sharepoint
+  // Created By :Gokul VG
     async getDocument (fileName:any):Promise<any>{
         const spURL = `https://aottech.sharepoint.com/sites/Caseflow/_api/web/GetFileByServerRelativeUrl('/sites/Caseflow/Caseflow/${fileName}')/$value`
         try {    
@@ -58,6 +54,8 @@ export class SharepointServices{
         }       
     }
 
+  // Summary : delete  File from Sharepoint
+  // Created By :Gokul VG
     async deleteDocument (fileName:any):Promise<any>{
             const spURL = `https://aottech.sharepoint.com/sites/Caseflow/_api/web/GetFileByServerRelativeUrl('/sites/Caseflow/Caseflow/${fileName}')`           
             try {   
@@ -81,6 +79,8 @@ export class SharepointServices{
             }
     }
 
+  // Summary : get access token
+  // Created By :Gokul VG
     async getAccessToken():Promise<any>{
        try{
         const data = {

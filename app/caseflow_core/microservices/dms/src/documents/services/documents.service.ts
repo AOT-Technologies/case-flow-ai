@@ -27,7 +27,7 @@ export class DocumentsService {
   // Created By : Don C Varghese
   async findAll(): Promise<CaseDocuments[]> {
     try {
-    return this.documentRepository.find({
+    return await this.documentRepository.find({
       where: {
         isdeleted: false,
       },
@@ -50,8 +50,8 @@ export class DocumentsService {
     try {
       const newCase =  this.documentRepository.create(createDocumentInput);
       const docdata=await this.documentRepository.save(newCase);
-      const documentid=docdata?.id;
       if(docdata && docdata?.id){
+      const documentid=docdata?.id;
       const versiondetails=await this.versionService.findDocument(documentid);
       const versionNumber=(versiondetails && versiondetails?.versions)?versiondetails?.versions:0;
       const versionData={
@@ -78,11 +78,9 @@ export class DocumentsService {
       return await this.documentRepository.findOne({
         where: {
           id: id,
-        
         },
         order: {
           id: "DESC",
-       
   }
       },
        );           
@@ -95,7 +93,7 @@ export class DocumentsService {
   // Created By : Don C Varghese
   async update(id: number, updateCaseInput: UpdateDocumentInput) {
     try {
-    return this.documentRepository.update(id,updateCaseInput)
+    return await this.documentRepository.update(id,updateCaseInput)
     .then( ()=> this.findOne(id))
     .catch( (e) => {
       console.error(e.message)
@@ -109,7 +107,7 @@ export class DocumentsService {
   // Created By : Don C Varghese
   async remove(id: number) {
     try {
-    let caseData = this.documentRepository.findOne({
+    let caseData = await this.documentRepository.findOne({
       where: {
         id: id,
       },
@@ -120,7 +118,7 @@ export class DocumentsService {
         return caseData;
       }
     }
-    throw new NotFoundException(`Record cannot find by id ${id}`);
+    console.log(`Record cannot find by id ${id}`);
   } catch (err) {
     console.log(err);
   }
@@ -166,30 +164,30 @@ export class DocumentsService {
  * @param searchColumn 
  * @returns 
  */
-  searchCaseDocument(searchField,searchColumn){
+  async searchCaseDocument(searchField,searchColumn){
     try{
     if(searchColumn){
       switch(searchColumn){
         case 'Description': {
-          return this.documentRepository.createQueryBuilder("table")
+          return await this.documentRepository.createQueryBuilder("table")
           .where("LOWER(table.desc) LIKE :title", { title: `%${ searchField.toLowerCase() }%` })
           .andWhere("table.isdeleted =:isDeleted",{isDeleted:false})
           .getMany();
         }
         default :
-        return this.documentRepository.createQueryBuilder("table")
+        return await this.documentRepository.createQueryBuilder("table")
         .where("LOWER(table.name) LIKE :title", { title: `%${ searchField.toLowerCase() }%` })
         .andWhere("table.isdeleted =:isDeleted",{isDeleted:false})
         .getMany();
       }
     }
     else{
-      return  new HttpException("select a field", HttpStatus.BAD_REQUEST)
+      console.log("select a field", HttpStatus.BAD_REQUEST)
     }
 
     }
     catch{
-      throw new HttpException("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR)
+      console.log("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
   }
