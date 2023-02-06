@@ -12,7 +12,7 @@ export class TransformService {
       case 'CREATE':
         try {
           return {
-            caseId: parseInt(data?.caseId),
+            referenceId: parseInt(data?.referenceId),
             documentref: document?.key,
             name: data?.name,
             desc: data?.desc,
@@ -59,7 +59,7 @@ export class TransformService {
             latestversion: document?.entry?.properties['cm:versionLabel'],
             isdeleted: false,
             type: data?.type,
-            caseId: data?.caseId,
+            referenceId: data?.referenceId,
           };
         } catch (err) {
           console.log(err);
@@ -88,7 +88,7 @@ export class TransformService {
       case 'CREATE':
         try {
           return {
-            caseId: data?.caseId,
+            referenceId: data?.referenceId,
             documentref: document?.UniqueId,
             name: data?.name,
             desc: data?.desc,

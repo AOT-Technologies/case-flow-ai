@@ -9,7 +9,7 @@ export class UpdateDocumentInput {
   id: number;
 
   @Field((type) => Int, { nullable: true })
-  caseId: number;
+  referenceId: string;
 
   @Field()
   documentref: string;

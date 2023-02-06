@@ -18,7 +18,7 @@ export class DocumentsController {
 
   //for upload documents
 
-  @Post('/uploadDocument')
+  @Post('/upload')
    @UseInterceptors(FileInterceptor('file'))
   async uploadDocument(
     @UploadedFile() file: Express.Multer.File,@Body() body,@Headers () auth) {
@@ -35,75 +35,87 @@ export class DocumentsController {
     console.log(err.message);
   }
   }
-
-  @Put()
-  @MessagePattern({ cmd: 'edit_document' })
-  async editDocument(data) {
+// edit document
+@Put('/upload')
+  // @MessagePattern({ cmd: 'edit_document' })
+  @UseInterceptors(FileInterceptor('file'))
+  async EditDocument(@UploadedFile() file: Express.Multer.File,@Body() body,@Headers () auth,) {
     try {
-      const document = await this.documentService.findOne(parseInt(data.id));
- 
-      if(!document.isdeleted) {
-        let documentDetails = await (data.file && document && data.dmsprovider
-          ? this.fileService.updateFile(data.file, data,document, data.dmsprovider,)
-          : null);
-        let formattedDocument: any = this.helper.transform(
-          data?.dmsprovider,
-          'UPDATE',
-          documentDetails,
-          data,
-        );
-        console.log('document', formattedDocument);
-        return this.documentService.update(data.id, document);
+      if(body && body?.id)
+      {
+        const token=auth?.authorization;
+        const document = await this.documentService.findOne(parseInt(body?.id));
+        if(!document?.isdeleted) {
+          let documentDetails = await (file && document && body?.dmsprovider
+            ? this.fileService.updateFile(file, body,document, body?.dmsprovider,token)
+            : null);
+          let formattedDocument: any = await this.helper.transform(body?.dmsprovider,'UPDATE',documentDetails,body);
+          return this.documentService.updateDocument(body?.id, formattedDocument);
       }
       else {
-        return new NotFoundException("No file found to update")
+        console.log("No file found to update")
       }
+    }
+    else{
+      console.log("Request body is not valid");
+    }
 
     } catch (err) {
       console.log(err.message);
     }
   }
 
-  @Get()
-  @MessagePattern({ cmd: 'fetch_document' })
-  async fetchDocument(param) {
-    const token=param.authorization;
-    try {   
-      let doc_id = null;
-      let documentDetails = await this.documentService.findOne(parseInt(param.id));
-      let dms = await documentDetails.dmsprovider;
-      if(dms===2){
-         doc_id = await (
-          documentDetails
-        ).name;
-      }   else{
-        doc_id = await (
-          documentDetails
-        ).documentref;
-      }  
-      const data = await this.fileService.downloadFile(doc_id, dms,token);
-      return {data : data , type : documentDetails.type,name : documentDetails.name,dmsprovider : documentDetails.dmsprovider}
+
+
+  // for delete documents
+  @Delete('/delete')
+  @UseInterceptors(FileInterceptor('file'))
+  async DeleteDocument(@Body() body,@Headers () auth,) {
+    try {
+      if(body && body?.id)
+      {
+        let documentDetails = await this.documentService.findOne(parseInt(body.id));
+        documentDetails.isdeleted = true;
+        let dms =  await documentDetails?.dmsprovider;
+        return this.fileService.deleteFile(documentDetails,dms,auth?.authorization).then(
+          async () => {
+            const deleteData= await this.documentService.update(body?.id, documentDetails);
+            return deleteData;
+          },
+        );
+        }
+      else{
+        console.log("docid not provided");
+      }
     } catch (error) {
       console.log(error.message);
     }
   }
 
-  // for delete documents
-  @Post('/deleteDocument')
-  @UseInterceptors(FileInterceptor('file'))
-  async DeleteDocument(@Body() body,@Query() param,@Headers () auth,) {
-    try {
-      let field = await this.documentService.findOne(parseInt(body.id));
-      field.isdeleted = true;
-      let documentDetails = await this.documentService.findOne(parseInt(body.id));
-      let dms = await documentDetails.dmsprovider;
-      return this.fileService.deleteFile(field,dms).then(
-        () => {
-          return this.documentService.update(body.id, field);
-        },
-      );
-    } catch (error) {
-      console.log(error.message);
+
+    // for  fetch documents - rest call
+    @Post('/fetch')
+    @UseInterceptors(FileInterceptor('file'))
+    async FetchDocument(@Body() body,@Headers () auth,) {
+      try {   
+        if(body && body?.id && auth?.authorization){
+          let doc_id = null;
+          let documentDetails = await this.documentService.findOne(parseInt(body.id));
+          let dms =  documentDetails.dmsprovider;
+          if(dms===2){
+            doc_id = await (documentDetails ).name;
+          }   else{
+            doc_id = await (
+              documentDetails
+            ).documentref;
+          }  
+          const data = await this.fileService.downloadFile(doc_id, dms,auth?.authorization);
+          return {data : data , type : documentDetails.type,name : documentDetails.name,dmsprovider : documentDetails.dmsprovider}
+      }
+    else{
+      console.log("DocId/header not provided");
+    }} catch (error) {
+        console.log(error.message);
+      }
     }
-  }
 }

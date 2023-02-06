@@ -1,7 +1,6 @@
 
 import { Field, ObjectType, Int,Directive,ID } from '@nestjs/graphql';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Cases } from './cases.entity';
 import { Versions }  from 'src/versions/entities/version.entity';
 /**
  * Summary :  Entity Class For documents
@@ -18,7 +17,7 @@ export class CaseDocuments {
 
   @Column()
   @Field()
-  caseId: number;
+  referenceId: string;
 
   @Column({ nullable: true })
   @Field({ nullable: true })
@@ -56,8 +55,6 @@ export class CaseDocuments {
   @Field({ nullable: true })
   type: string;
 
-  @Field(() => Cases)
-  cases: Cases;
 
   
   @OneToMany(() => Versions, (versions) => versions.documents)

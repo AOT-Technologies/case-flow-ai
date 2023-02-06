@@ -22,21 +22,24 @@ directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ARGUM
 
 directive @override(from: String!) on FIELD_DEFINITION
 
-type caseDocumentResponse {
-  CaseDocuments: [CaseDocuments!]!
-  totalCount: Int!
+type Versions {
+  id: ID!
+  docid: Int!
+  versions: Float
+  creationdate: DateTime
+  modificationdate: DateTime!
+  documentid: String!
+  documents: CaseDocuments
 }
 
-type Cases {
-  id: ID!
-  take: Int!
-  skip: Int!
-  documents(skip: Int! = 0, take: Int! = 25): caseDocumentResponse!
-}
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type CaseDocuments {
   id: ID!
-  caseId: Float!
+  referenceId: String!
   documentref: String
   desc: String
   addedbyuserid: Float
@@ -46,50 +49,23 @@ type CaseDocuments {
   latestversion: String
   isdeleted: Boolean
   type: String
-  cases: Cases!
+  versions: [Versions!]
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
+type caseDocumentResponse {
+  CaseDocuments: [CaseDocuments!]!
+  totalCount: Int!
+}
 
 type Query {
   documents: [CaseDocuments!]!
   getCaseDocument(id: Int!): [CaseDocuments!]!
-  SearchcaseDocument(searchField: String!, searchColumn: String!): [CaseDocuments!]!
+  getAllversions: [Versions!]!
+  version(id: Int!): Versions!
 }
 
 type Mutation {
-  createDocument(createDocumentInput: CreateDocumentInput!): CaseDocuments!
-  updateDocument(updateDocumentInput: UpdateDocumentInput!): CaseDocuments!
-  removeDocument(id: Float!): CaseDocuments!
-}
-
-input CreateDocumentInput {
-  caseId: Int
-  documentref: String!
-  desc: String
-  addedbyuserid: Float
-  creationdate: DateTime! = "2023-01-18T05:46:40.276Z"
-  dmsprovider: Float!
-  name: String!
-  latestversion: String!
-  isdeleted: Boolean! = false
-  type: String
-}
-
-input UpdateDocumentInput {
-  id: Int!
-  caseId: Int
-  documentref: String!
-  desc: String
-  addedbyuserid: Float!
-  creationdate: DateTime! = "2023-01-18T05:46:40.278Z"
-  dmsprovider: Float!
-  name: String!
-  latestversion: String!
-  isdeleted: Boolean! = false
+  removeVersion(id: Int!): Versions!
 }
 
 scalar link__Import

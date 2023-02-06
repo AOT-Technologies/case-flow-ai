@@ -7,12 +7,11 @@ import { DocumentsResolver } from './resolvers/documents.resolver';
 import { CaseDocuments } from './entities/documents.entity';
 import { DocumentsController } from './documents.controller';
 import { HelpersModule } from '../helpers/helpers.module';
-import { CasesResolver } from './resolvers/cases.resolver';
 import { VersionsModule } from 'src/versions/versions.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([CaseDocuments]), HelpersModule,VersionsModule],
-  providers: [DocumentsService, DocumentsResolver,CasesResolver],
+  providers: [DocumentsService, DocumentsResolver],
   controllers: [DocumentsController],
 })
 export class DocumentsModule {}

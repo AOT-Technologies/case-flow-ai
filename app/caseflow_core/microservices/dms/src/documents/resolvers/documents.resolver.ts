@@ -38,62 +38,13 @@ export class DocumentsResolver {
     return this.documentService.findOne( id );
   }
 
-  /**
-   * method for search documents
-   * @param searchField 
-   * @param searchColumn 
-   * @returns 
-   */
-  @Query((returns) => [CaseDocuments] )
-  SearchcaseDocument(
-    @Args('searchField') searchField: string,
-    @Args('searchColumn') searchColumn : string,
-     ): Promise<CaseDocuments[]> | HttpException{
 
-    return this.documentService.searchCaseDocument(searchField,searchColumn);
-  }
+  
 
   //_____________________Mutation_____________________//
 
-  /**
-   * Summary : Mutation for insert documents
-   * Created By : Akhila U S 
-   * @param createDocumentInput 
-   * @returns 
-   */
-  @Mutation((returns) => CaseDocuments)
-  createDocument(
-    @Args('createDocumentInput') createDocumentInput: CreateDocumentInput,
-  ): Promise<CaseDocuments> {
-    return this.documentService.createDocument(createDocumentInput);
-  }
-/**
- * Summary : Mutation for update documents
- * Created By : Akhila U S 
- * @param updateDocumentInput 
- * @returns 
- */
-  @Mutation(() => CaseDocuments)
-  updateDocument(@Args('updateDocumentInput') updateDocumentInput: UpdateDocumentInput) {
-    return this.documentService.update(updateDocumentInput.id, updateDocumentInput);
-  }
-/**
- * Summary : Mutation for remove documents
- * Created By : Akhila U S 
- * @param id 
- * @returns 
- */
-  @Mutation(() => CaseDocuments)
-  removeDocument(@Args('id') id: number) {
-    return this.documentService.remove(id);
-  }
+  
 
 
-  //_____________________Resolver Reference For GraphQL Federation_____________________//
-
-  @ResolveField((of)=>CaseDocuments)
-  cases(@Parent() document:CaseDocuments){
-    return {__typename:"Cases",id:document.caseId}
-  }
 
 }

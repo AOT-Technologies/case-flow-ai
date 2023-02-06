@@ -85,7 +85,7 @@ export class VersionsService {
       if (id) {
         const value = await this.verisonRepository.findOne({
           where: {
-            id: id,
+            docid: id,
           },
           relations: [
             'documents',
