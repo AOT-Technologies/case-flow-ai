@@ -22,7 +22,7 @@ export class DocumentsResolver {
    * Created By : Akhila U S
    * @returns 
    */
-  @Query(() => [CaseDocuments],{ name: 'documents' })
+  @Query(() => [CaseDocuments],{ name: 'getDocuments' })
   documents(): Promise<CaseDocuments[]> {
     return this.documentService.findAll();
   }
@@ -33,8 +33,8 @@ export class DocumentsResolver {
  * @param args 
  * @returns 
  */
-  @Query((returns) => [CaseDocuments])
-  getCaseDocument(@Args('id', { type: () => Int }) id: number): Promise<CaseDocuments> {
+  @Query((returns) => CaseDocuments,{ name: 'getDocumentById' })
+  getDocument(@Args('id', { type: () => Int }) id: number): Promise<CaseDocuments> {
     return this.documentService.findOne( id );
   }
 

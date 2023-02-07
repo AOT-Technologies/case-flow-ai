@@ -26,7 +26,12 @@ export class DocumentsController {
       if(body && body?.dmsprovider && auth?.authorization){    
         const documentDetails = await this.fileService.uploadFile(file, body, body?.dmsprovider,auth?.authorization);
         const formattedDocument: any = await this.helper.transform(body?.dmsprovider,'CREATE',documentDetails,body);
-        return this.documentService.createDocument(formattedDocument);
+        const docdata = await this.documentService.createDocument(formattedDocument);
+        const response={
+          status:"success",
+          data:docdata
+        }
+        return response;
       }
       else{
         console.log("Request body/header Not provided");
@@ -50,7 +55,13 @@ export class DocumentsController {
             ? this.fileService.updateFile(file, body,document, body?.dmsprovider,token)
             : null);
           let formattedDocument: any = await this.helper.transform(body?.dmsprovider,'UPDATE',documentDetails,body);
-          return this.documentService.updateDocument(body?.id, formattedDocument);
+          const docdata = await this.documentService.updateDocument(body?.id, formattedDocument);
+          
+        const response={
+          status:"success",
+          data:docdata
+        }
+        return response;
       }
       else {
         console.log("No file found to update")
@@ -80,7 +91,12 @@ export class DocumentsController {
         return this.fileService.deleteFile(documentDetails,dms,auth?.authorization).then(
           async () => {
             const deleteData= await this.documentService.update(body?.id, documentDetails);
-            return deleteData;
+            
+        const response={
+          status:"success",
+          data:deleteData
+        }
+        return response;
           },
         );
         }
@@ -94,7 +110,7 @@ export class DocumentsController {
 
 
     // for  fetch documents - rest call
-    @Post('/fetch')
+    @Post('/download')
     @UseInterceptors(FileInterceptor('file'))
     async FetchDocument(@Body() body,@Headers () auth,) {
       try {   

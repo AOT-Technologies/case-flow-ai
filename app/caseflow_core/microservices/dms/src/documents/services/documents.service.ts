@@ -29,7 +29,7 @@ export class DocumentsService {
       order: {
         id: "DESC",
        
-},
+},relations:["versions"]
     });
   } catch (err) {
     console.log(err);
@@ -56,10 +56,11 @@ export class DocumentsService {
         modificationdate:new Date()
       }
       const data=await this.versionService.create(versionData);
+      
     }else{
       console.log("Error in doc upload");
     }
-      return docdata;
+    return await this.findOne(docdata?.id);
     } catch (err) {
       console.log(err);
     }
@@ -84,7 +85,8 @@ export class DocumentsService {
           modificationdate:new Date()
         }
         const data=await this.versionService.create(versionData);
-        return docdata;
+        return await this.findOne(id);
+        //return docdata;
       }else{
         console.log("Error in doc upload");
       } 
@@ -107,7 +109,7 @@ export class DocumentsService {
         },
         order: {
           id: "DESC",
-  }
+  },relations:["versions"]
       },
        );           
     }catch(err){

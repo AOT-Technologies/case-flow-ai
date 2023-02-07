@@ -58,8 +58,8 @@ type caseDocumentResponse {
 }
 
 type Query {
-  documents: [CaseDocuments!]!
-  getCaseDocument(id: Int!): [CaseDocuments!]!
+  getDocuments: [CaseDocuments!]!
+  getDocumentById(id: Int!): CaseDocuments!
   getAllversions: [Versions!]!
   version(id: Int!): Versions!
 }
