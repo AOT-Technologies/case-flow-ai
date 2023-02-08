@@ -1,20 +1,6 @@
 version: "3.7"
 
 services:
-  caseflowdms-db:
-    image: postgres:13
-    container_name: database
-    environment:
-      POSTGRES_USER: ${POSTGRES_DB_USERNAME:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_DB_PASSWORD:-changeme}
-      POSTGRES_DB: ${POSTGRES_DATABASE:-caseflow_dms}
-    ports:
-        - 5433:5432
-    restart: unless-stopped
-    volumes:
-      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
-    networks:
-      - case-flow-dmsapi-network
 
  
   caseflow-microservice:
@@ -47,8 +33,7 @@ services:
         - SHAREPOINT_CLIENT_ID=${SHAREPOINT_CLIENT_ID}
         - SHAREPOINT_CLIENT_SECRET=${SHAREPOINT_CLIENT_SECRET}
         - SHAREPOINT_RESOURCE=${SHAREPOINT_RESOURCE}
-    depends_on:
-        - caseflowdms-db
+  
 
     ports:
       - "7002:7002"
