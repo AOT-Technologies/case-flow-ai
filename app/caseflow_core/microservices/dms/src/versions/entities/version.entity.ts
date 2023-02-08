@@ -1,7 +1,7 @@
 
 
 import { Field, ObjectType, Int ,Directive,ID } from '@nestjs/graphql';
-import { CaseDocuments } from 'src/documents/entities/documents.entity';
+import { Documents } from 'src/documents/entities/documents.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 /**
@@ -37,10 +37,10 @@ export class Versions {
   documentid: string;
 
 
-  @ManyToOne(() => CaseDocuments, (documents) => documents.versions)
-  @Field(() => CaseDocuments, { nullable: true })
+  @ManyToOne(() => Documents, (documents) => documents.versions)
+  @Field(() => Documents, { nullable: true })
   @JoinColumn({name: 'docid'})
-  documents: CaseDocuments;
+  documents: Documents;
 
 }
 

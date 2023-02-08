@@ -4,15 +4,19 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 //_____________________Custom Imports_____________________//
 import { FileService } from '../helpers/file.service';
+import { AuthService } from '../helpers/auth.service';
+
 
 import { DocumentsService } from './services/documents.service';
 import { Express } from 'express';
 import { TransformService } from '../helpers/transform.service';
+
 @Controller('documents')
 export class DocumentsController {
   constructor(
     private readonly fileService: FileService,
     private helper: TransformService,
+    private auth: AuthService,
     private documentService: DocumentsService,
   ) {}
 
@@ -25,7 +29,8 @@ export class DocumentsController {
       try {
       if(body && body?.dmsprovider && auth?.authorization){    
         const documentDetails = await this.fileService.uploadFile(file, body, body?.dmsprovider,auth?.authorization);
-        const formattedDocument: any = await this.helper.transform(body?.dmsprovider,'CREATE',documentDetails,body);
+        const user: any = await this.auth.getTokenUser(auth?.authorization);
+        const formattedDocument: any = await this.helper.transform(body?.dmsprovider,'CREATE',documentDetails,body,user);
         const docdata = await this.documentService.createDocument(formattedDocument);
         const response={
           status:"success",
@@ -54,7 +59,9 @@ export class DocumentsController {
           let documentDetails = await (file && document && body?.dmsprovider
             ? this.fileService.updateFile(file, body,document, body?.dmsprovider,token)
             : null);
-          let formattedDocument: any = await this.helper.transform(body?.dmsprovider,'UPDATE',documentDetails,body);
+            const user: any = await this.auth.getTokenUser(auth?.authorization);
+
+          let formattedDocument: any = await this.helper.transform(body?.dmsprovider,'UPDATE',documentDetails,body,user);
           const docdata = await this.documentService.updateDocument(body?.id, formattedDocument);
           
         const response={
@@ -110,13 +117,13 @@ export class DocumentsController {
 
 
     // for  fetch documents - rest call
-    @Post('/download')
-    @UseInterceptors(FileInterceptor('file'))
-    async FetchDocument(@Body() body,@Headers () auth,) {
+    @Get('/download')
+    // @UseInterceptors(FileInterceptor('file'))
+    async FetchDocument(@Query() param,@Headers () auth,) {
       try {   
-        if(body && body?.id && auth?.authorization){
+        if(param && param?.id && auth?.authorization){
           let doc_id = null;
-          let documentDetails = await this.documentService.findOne(parseInt(body.id));
+          let documentDetails = await this.documentService.findOne(parseInt(param.id));
           let dms =  documentDetails.dmsprovider;
           if(dms===2){
             doc_id = await (documentDetails ).name;

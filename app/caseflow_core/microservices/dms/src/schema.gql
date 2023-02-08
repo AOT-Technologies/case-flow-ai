@@ -29,7 +29,7 @@ type Versions {
   creationdate: DateTime
   modificationdate: DateTime!
   documentid: String!
-  documents: CaseDocuments
+  documents: Documents
 }
 
 """
@@ -37,7 +37,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type CaseDocuments {
+type Documents {
   id: ID!
   referenceId: String!
   documentref: String
@@ -52,14 +52,9 @@ type CaseDocuments {
   versions: [Versions!]
 }
 
-type caseDocumentResponse {
-  CaseDocuments: [CaseDocuments!]!
-  totalCount: Int!
-}
-
 type Query {
-  getDocuments: [CaseDocuments!]!
-  getDocumentById(id: Int!): CaseDocuments!
+  getDocuments: [Documents!]!
+  getDocumentById(id: Int!): Documents!
   getAllversions: [Versions!]!
   version(id: Int!): Versions!
 }

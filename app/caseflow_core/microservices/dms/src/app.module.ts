@@ -63,7 +63,7 @@ const keyCloakOptionsProvider =  {
 
       host: config.get('POSTGRESQL_HOST') || 'caseflowdev.ccizdidwz3tj.ca-central-1.rds.amazonaws.com',
       port: parseInt(config.get('POSTGRESQL_PORT')) || 5432,
-      database: config.get('POSTGRES_DATABASE') || 'caseflow_core',
+      database: config.get('POSTGRES_DATABASE') || 'caseflow_dms',
       username: config.get('POSTGRES_DB_USERNAME') || 'postgres',
       password: config.get('POSTGRES_DB_PASSWORD') || '0DhoxLWL5HlS27WjLkUL',
 

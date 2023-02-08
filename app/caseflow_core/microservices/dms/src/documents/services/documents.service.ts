@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 
 //_____________________Custom Imports_____________________//
 import { CreateDocumentInput } from '../dto/create-document.input';
-import {  CaseDocuments } from '../entities/documents.entity';
+import {  Documents } from '../entities/documents.entity';
 import { UpdateDocumentInput } from '../dto/update-documet.input';
 import { VersionsService } from 'src/versions/services/versions.service';
 /**
@@ -14,13 +14,13 @@ import { VersionsService } from 'src/versions/services/versions.service';
 @Injectable()
 export class DocumentsService {
   constructor(
-    @InjectRepository(CaseDocuments)
-    private documentRepository: Repository<CaseDocuments>,private versionService: VersionsService
+    @InjectRepository(Documents)
+    private documentRepository: Repository<Documents>,private versionService: VersionsService
   ) {}
 
   // summery : Get all documents
   // Created By : Don C Varghese
-  async findAll(): Promise<CaseDocuments[]> {
+  async findAll(): Promise<Documents[]> {
     try {
     return await this.documentRepository.find({
       where: {
@@ -40,7 +40,7 @@ export class DocumentsService {
   // Created By : Don C Varghese
   async createDocument(
     createDocumentInput: CreateDocumentInput,
-  ): Promise<CaseDocuments> {
+  ): Promise<Documents> {
     try {
       const newCase =  this.documentRepository.create(createDocumentInput);
       const docdata=await this.documentRepository.save(newCase);
@@ -56,11 +56,11 @@ export class DocumentsService {
         modificationdate:new Date()
       }
       const data=await this.versionService.create(versionData);
+      return await this.findOne(docdata?.id);
       
     }else{
       console.log("Error in doc upload");
     }
-    return await this.findOne(docdata?.id);
     } catch (err) {
       console.log(err);
     }
@@ -101,7 +101,7 @@ export class DocumentsService {
 
   // summery : Select  single document
   // Created By : Don C Varghese
-  async findOne( id : number ): Promise<CaseDocuments> {
+  async findOne( id : number ): Promise<Documents> {
     try{
       return await this.documentRepository.findOne({
         where: {
@@ -133,6 +133,25 @@ export class DocumentsService {
   }
   }
 
- 
+
+//hard delete
+  async remove(id: number) {
+    try {
+    let docData = await this.documentRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (docData) {
+      let ret = await this.documentRepository.delete(id);
+      if (ret.affected === 1) {
+        return docData;
+      }
+    }
+    console.log(`Record cannot find by id ${id}`);
+  } catch (err) {
+    console.log(err);
+  }
+  }
 
 }

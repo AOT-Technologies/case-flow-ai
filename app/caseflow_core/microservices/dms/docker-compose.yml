@@ -16,13 +16,13 @@ services:
     networks:
       - case-flow-dmsapi-network
 
-
+ 
   caseflow-microservice:
     container_name: caseflow-microservice
     build:
       context: .
       dockerfile: Dockerfile
-      args:
+    environment:
         - NODE_ENV=${NODE_ENV:-production}
         - KEYCLOCK_CLIENT_ID=${KEYCLOCK_CLIENT_ID:-case-flow-nest}
         - KEYCLOCK_REALM=${KEYCLOCK_REALM:-caseflow}
@@ -47,7 +47,8 @@ services:
         - SHAREPOINT_CLIENT_ID=${SHAREPOINT_CLIENT_ID}
         - SHAREPOINT_CLIENT_SECRET=${SHAREPOINT_CLIENT_SECRET}
         - SHAREPOINT_RESOURCE=${SHAREPOINT_RESOURCE}
-
+    depends_on:
+        - caseflowdms-db
 
     ports:
       - "7002:7002"

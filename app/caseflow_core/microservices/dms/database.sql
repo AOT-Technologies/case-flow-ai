@@ -1,6 +1,6 @@
-CREATE TABLE case_documents (
+CREATE TABLE documents (
     id serial4 NOT NULL,	
-	caseId int8 NULL,
+	"referenceId" varchar NULL,
 	documentref varchar NULL,
 	"desc" text NULL,
 	addedbyuserid varchar NULL,
@@ -10,7 +10,7 @@ CREATE TABLE case_documents (
 	latestversion varchar NULL,
 	isdeleted bool NULL,
 	"type" varchar NULL,
-	CONSTRAINT CaseDocuments_pkey PRIMARY KEY (id),
+	CONSTRAINT Documents_pkey PRIMARY KEY (id)
     
 );
 CREATE TABLE versions (
@@ -21,6 +21,6 @@ CREATE TABLE versions (
 	documentid varchar NULL,
 	versions int4 NULL,
 	CONSTRAINT versions_pk PRIMARY KEY (id),
-	CONSTRAINT versions_fk FOREIGN KEY (docid) REFERENCES case_documents(id)
+	CONSTRAINT versions_fk FOREIGN KEY (docid) REFERENCES documents(id)
 );
 

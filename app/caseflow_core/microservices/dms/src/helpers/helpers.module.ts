@@ -7,6 +7,7 @@ import { AmazonS3Service } from './amazon-s3.service';
 import { FileService } from './file.service';
 import { AlfrescoService } from './alfresco.service';
 import { SharepointServices } from './sharepoint.service';
+import { AuthService } from './auth.service';
 
 
 @Module({
@@ -17,8 +18,9 @@ import { SharepointServices } from './sharepoint.service';
     ConfigService,
     FileService,
     AlfrescoService,
-    SharepointServices
+    SharepointServices,
+    AuthService
   ],
-  exports: [TransformService, AmazonS3Service, FileService,AlfrescoService,SharepointServices],
+  exports: [TransformService, AmazonS3Service, FileService,AlfrescoService,SharepointServices,AuthService],
 })
 export class HelpersModule {}

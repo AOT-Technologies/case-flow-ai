@@ -10,7 +10,7 @@ import { Versions }  from 'src/versions/entities/version.entity';
 @Entity()
 @ObjectType()
 @Directive('@key(fields:"id")')
-export class CaseDocuments {
+export class Documents {
   @PrimaryGeneratedColumn()
   @Field((type) => ID)
   id: number;
