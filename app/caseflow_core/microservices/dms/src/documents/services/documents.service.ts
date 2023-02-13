@@ -71,6 +71,7 @@ export class DocumentsService {
   // Created By : Don C Varghese
   async updateDocument(id: number, updateCaseInput: UpdateDocumentInput) {
     try {
+      
     return await this.documentRepository.update(id,updateCaseInput)
     .then(async ()=> {
       const docdata=await this.findOne(id);
@@ -117,13 +118,31 @@ export class DocumentsService {
     }
   }
 
+    // summery : Select  single document
+  // Created By : Don C Varghese
+  async findDocumentById( id : number ): Promise<Documents> {
+    try{
+      return await this.documentRepository.findOne({
+        where: {
+          id: id,
+        },
+        order: {
+          id: "DESC",
+  }
+      },
+       );           
+    }catch(err){
+      console.log(err)
+    }
+  }
+
   // summery : Update a new document
   // Created By : Don C Varghese
   async update(id: number, updateCaseInput: UpdateDocumentInput) {
     try {
     return await this.documentRepository.update(id,updateCaseInput)
     .then(()=> {
-    return this.findOne(id)
+    return this.findDocumentById(id)
     })
     .catch( (e) => {
       console.error(e.message)

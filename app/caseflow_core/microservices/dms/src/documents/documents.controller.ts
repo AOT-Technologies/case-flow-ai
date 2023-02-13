@@ -23,7 +23,7 @@ export class DocumentsController {
   //for upload documents
 
   @Post('/upload')
-   @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file'))
   async uploadDocument(
     @UploadedFile() file: Express.Multer.File,@Body() body,@Headers () auth) {
       try {
@@ -32,10 +32,18 @@ export class DocumentsController {
         const user: any = await this.auth.getTokenUser(auth?.authorization);
         const formattedDocument: any = await this.helper.transform(body?.dmsprovider,'CREATE',documentDetails,body,user);
         const docdata = await this.documentService.createDocument(formattedDocument);
-        const response={
+        let response;
+        if(docdata && docdata?.id){
+        response={
           status:"success",
           data:docdata
         }
+      }else{
+       response={
+          status:"error",
+          data:docdata
+        }
+      }
         return response;
       }
       else{
@@ -64,9 +72,17 @@ export class DocumentsController {
           let formattedDocument: any = await this.helper.transform(body?.dmsprovider,'UPDATE',documentDetails,body,user);
           const docdata = await this.documentService.updateDocument(body?.id, formattedDocument);
           
-        const response={
-          status:"success",
-          data:docdata
+          let response;
+          if(docdata && docdata?.id){
+          response={
+            status:"success",
+            data:docdata
+          }
+        }else{
+         response={
+            status:"error",
+            data:docdata
+          }
         }
         return response;
       }
@@ -92,17 +108,25 @@ export class DocumentsController {
     try {
       if(body && body?.id)
       {
-        let documentDetails = await this.documentService.findOne(parseInt(body.id));
+        let documentDetails = await this.documentService.findDocumentById(parseInt(body.id));
         documentDetails.isdeleted = true;
         let dms =  await documentDetails?.dmsprovider;
         return this.fileService.deleteFile(documentDetails,dms,auth?.authorization).then(
           async () => {
             const deleteData= await this.documentService.update(body?.id, documentDetails);
             
-        const response={
-          status:"success",
-          data:deleteData
-        }
+            let response;
+            if(deleteData && deleteData?.id && deleteData?.isdeleted==true){
+            response={
+              status:"success",
+              data:deleteData
+            }
+          }else{
+           response={
+              status:"error",
+              data:deleteData
+            }
+          }
         return response;
           },
         );
@@ -116,9 +140,40 @@ export class DocumentsController {
   }
 
 
+    // hard delete documents
+    @Delete('/deleteDoc')
+    @UseInterceptors(FileInterceptor('file'))
+    async DeleteDocumentDoc(@Body() body,@Headers () auth,) {
+      try {
+        if(body && body?.id)
+        {
+          let documentDetails = await this.documentService.findDocumentById(parseInt(body.id));
+          documentDetails.isdeleted = true;
+          let dms =  await documentDetails?.dmsprovider;
+          return this.fileService.deleteFile(documentDetails,dms,auth?.authorization).then(
+            async () => {
+              const deleteData= await this.documentService.remove(body?.id);
+              
+          const response={
+            status:"success",
+            data:deleteData
+          }
+          return response;
+            },
+          );
+          }
+        else{
+          console.log("docid not provided");
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
+
     // for  fetch documents - rest call
     @Get('/download')
-    // @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('file'))
     async FetchDocument(@Query() param,@Headers () auth,) {
       try {   
         if(param && param?.id && auth?.authorization){
