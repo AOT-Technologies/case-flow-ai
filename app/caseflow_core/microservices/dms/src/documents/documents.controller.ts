@@ -1,4 +1,4 @@
-import { Body,Headers , Controller, Post, UploadedFile, UseInterceptors,Delete, Get, Patch,NotFoundException, Put, Query } from '@nestjs/common';
+import { Body,Headers , Controller, Post, UploadedFile, UseInterceptors,Delete, Get, Patch,NotFoundException, Put, Query,UsePipes } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -6,10 +6,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from '../helpers/file.service';
 import { AuthService } from '../helpers/auth.service';
 
-
+import { createDocumentSchema, deleteDocumentSchema, updateDocumentSchema } from "../validation-schemas/document_validation.schema"
 import { DocumentsService } from './services/documents.service';
 import { Express } from 'express';
 import { TransformService } from '../helpers/transform.service';
+import { JoiValidationPipe } from '../pipes/joi-validation.pipe';
 
 @Controller('documents')
 export class DocumentsController {
@@ -23,9 +24,10 @@ export class DocumentsController {
   //for upload documents
 
   @Post('/upload')
+  // @UsePipes(new JoiValidationPipe(createDocumentSchema))
   @UseInterceptors(FileInterceptor('file'))
   async uploadDocument(
-    @UploadedFile() file: Express.Multer.File,@Body() body,@Headers () auth) {
+    @UploadedFile() file: Express.Multer.File,@Body(new JoiValidationPipe(createDocumentSchema)) body,@Headers () auth) {
       try {
       if(body && body?.dmsprovider && auth?.authorization){    
         const documentDetails = await this.fileService.uploadFile(file, body, body?.dmsprovider,auth?.authorization);
@@ -57,7 +59,7 @@ export class DocumentsController {
 @Put('/upload')
   // @MessagePattern({ cmd: 'edit_document' })
   @UseInterceptors(FileInterceptor('file'))
-  async EditDocument(@UploadedFile() file: Express.Multer.File,@Body() body,@Headers () auth,) {
+  async EditDocument(@UploadedFile() file: Express.Multer.File,@Body(new JoiValidationPipe(updateDocumentSchema)) body,@Headers () auth,) {
     try {
       if(body && body?.id)
       {
@@ -104,7 +106,7 @@ export class DocumentsController {
   // for delete documents
   @Delete('/delete')
   @UseInterceptors(FileInterceptor('file'))
-  async DeleteDocument(@Body() body,@Headers () auth,) {
+  async DeleteDocument(@Body(new JoiValidationPipe(deleteDocumentSchema)) body,@Headers () auth,) {
     try {
       if(body && body?.id)
       {
@@ -143,7 +145,7 @@ export class DocumentsController {
     // hard delete documents
     @Delete('/deleteDoc')
     @UseInterceptors(FileInterceptor('file'))
-    async DeleteDocumentDoc(@Body() body,@Headers () auth,) {
+    async DeleteDocumentDoc(@Body(new JoiValidationPipe(deleteDocumentSchema)) body,@Headers () auth,) {
       try {
         if(body && body?.id)
         {
@@ -174,7 +176,7 @@ export class DocumentsController {
     // for  fetch documents - rest call
     @Get('/download')
     @UseInterceptors(FileInterceptor('file'))
-    async FetchDocument(@Query() param,@Headers () auth,) {
+    async FetchDocument(@Query(new JoiValidationPipe(updateDocumentSchema)) param,@Headers () auth,) {
       try {   
         if(param && param?.id && auth?.authorization){
           let doc_id = null;
