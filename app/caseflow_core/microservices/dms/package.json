@@ -42,6 +42,7 @@
     "graphql": "^16.6.0",
     "graphql-tools": "^8.3.14",
     "graphql-upload": "^16.0.2",
+    "joi": "^17.8.3",
     "jwt-decode": "^3.1.2",
     "keycloak-connect": "^18.0.2",
     "nest-keycloak-connect": "^1.9.0",
