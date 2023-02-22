@@ -90,7 +90,7 @@ export class AlfrescoService {
       const headersRequest = {
         "Authorization": token 
     };
-      const url = this.configService.get('ALFRESCO_REPO_URL') + "/1/nodes/"+ documentId +"/content?attachment=true"
+      const url = this.configService.get('ALFRESCO_REPO_URL') + "/1/nodes/"+ documentId +"?permanent=false"
       let response = await firstValueFrom(this.httpService.delete(url,{
         headers : headersRequest
       

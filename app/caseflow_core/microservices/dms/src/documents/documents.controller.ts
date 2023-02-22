@@ -6,7 +6,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from '../helpers/file.service';
 import { AuthService } from '../helpers/auth.service';
 
-import { createDocumentSchema, deleteDocumentSchema, updateDocumentSchema } from "../validation-schemas/document_validation.schema"
+import { createDocumentSchema, deleteDocumentSchema, downloadDocumentSchema, updateDocumentSchema } from "../validation-schemas/document_validation.schema"
 import { DocumentsService } from './services/documents.service';
 import { Express } from 'express';
 import { TransformService } from '../helpers/transform.service';
@@ -176,7 +176,7 @@ export class DocumentsController {
     // for  fetch documents - rest call
     @Get('/download')
     @UseInterceptors(FileInterceptor('file'))
-    async FetchDocument(@Query(new JoiValidationPipe(updateDocumentSchema)) param,@Headers () auth,) {
+    async FetchDocument(@Query(new JoiValidationPipe(downloadDocumentSchema)) param,@Headers () auth,) {
       try {   
         if(param && param?.id && auth?.authorization){
           let doc_id = null;

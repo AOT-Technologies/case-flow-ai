@@ -14,7 +14,7 @@ export class TransformService {
       case 'CREATE':
         try {
           return {
-            referenceId: parseInt(data?.referenceId),
+            referenceId: data?.referenceId,
             documentref: document?.key,
             name: data?.name,
             desc: data?.desc,
@@ -70,11 +70,11 @@ export class TransformService {
       case 'UPDATE':
         try {
           return {
-            documentref: document?.entry.id,
+            documentref:  document?.data?.entry?.id,
             desc: data?.desc,
             addedbyuserid: user,
             dmsprovider: 3,
-            latestversion: document?.entry?.properties['cm:versionLabel'],
+            latestversion: document?.data?.entry?.properties['cm:versionLabel'],
             isdeleted: false,
           };
         } catch (err) {

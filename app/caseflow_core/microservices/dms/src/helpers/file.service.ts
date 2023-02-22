@@ -35,10 +35,10 @@ export class FileService {
     try{
     switch (dms) {
       case '1': {
-        return await this.s3Service.uploadDocument(file, data?.fileName);
+        return await this.s3Service.uploadDocument(file, data?.name);
       }
       case '2': {
-        return await this.spService.uploadDocument(file, data?.fileName);
+        return await this.spService.uploadDocument(file, data?.name);
       }
       case '3': {
         return await this.alfrescoService.updateDocument(file,document, data,token);
@@ -74,14 +74,14 @@ export class FileService {
   async deleteFile(document, dms,token=null) {
     try{
     switch (dms) {
-      case '1': {
+      case 1: {
         return await this.s3Service.deleteDocument(document?.documentref);
       }
-      case '2': {
+      case 2: {
         return await this.spService.deleteDocument(document?.name);
       }
       case 3: {
-        return await this.alfrescoService.deleteDocument(document?.name,token);
+        return await this.alfrescoService.deleteDocument(document?.documentref,token);
       }
     }
   } catch (err) {
