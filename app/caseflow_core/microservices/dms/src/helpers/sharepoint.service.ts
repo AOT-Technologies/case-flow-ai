@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuid } from 'uuid';
 // import queryString from 'query-string';
@@ -31,7 +31,7 @@ export class SharepointServices{
                 }))
               return responseUpload.data    
             } catch (e) {
-              console.log(e)
+              throw new BadRequestException("Issue in the doc upload")
             }         
     }    
 
@@ -49,7 +49,7 @@ export class SharepointServices{
            
           return responseUpload.data.buffer;
         } catch (e) {
-          console.log(e)
+          throw new BadRequestException("Issue in the getting document")
 
         }       
     }
@@ -74,7 +74,7 @@ export class SharepointServices{
                 }))                            
               return responseUpload    
             } catch (e) {
-              console.log(e)
+              throw new BadRequestException("Issue in the doc delete")
 
             }
     }
@@ -98,7 +98,7 @@ export class SharepointServices{
         return  getToken.data.access_token;
 
        }catch(err){    
-        console.log(err)
+        throw new BadRequestException("Issue in the doc upload")
        }
     }
 
@@ -115,7 +115,7 @@ export class SharepointServices{
             
 
         }catch(err){
-            console.log(err)
+          throw new BadRequestException("Issue in the doc upload")
         }
     }
 

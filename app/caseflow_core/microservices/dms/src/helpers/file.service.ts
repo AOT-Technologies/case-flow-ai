@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 //_____________________Custom Imports_____________________//
 import { AmazonS3Service } from './amazon-s3.service';
@@ -25,7 +25,7 @@ export class FileService {
       }
     }
   } catch (err) {
-    console.log(err.message);
+    throw new BadRequestException("Issue in the doc upload")
   }
   }
 
@@ -45,7 +45,7 @@ export class FileService {
       }
     }
   } catch (err) {
-    console.log(err.message);
+    throw new BadRequestException("Issue in the doc upload")
   }
   }
 
@@ -65,7 +65,7 @@ export class FileService {
       }
     }
   } catch (err) {
-    console.log(err.message);
+    throw new BadRequestException("Issue in the doc upload")
   }
   }
 
@@ -85,7 +85,7 @@ export class FileService {
       }
     }
   } catch (err) {
-    console.log(err.message);
+    throw new BadRequestException("Issue in the doc upload")
   }
   }
   

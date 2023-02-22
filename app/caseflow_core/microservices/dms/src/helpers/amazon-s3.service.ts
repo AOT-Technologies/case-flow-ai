@@ -1,4 +1,4 @@
-import { Injectable,NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable,NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { S3 } from 'aws-sdk';
 import { v4 as uuid } from 'uuid';
@@ -40,7 +40,7 @@ export class AmazonS3Service {
       })
       .promise();
     } catch (err) {
-      console.log(err);
+      throw new BadRequestException("Issue in the doc upload")
     }
   }
 
@@ -58,7 +58,7 @@ export class AmazonS3Service {
       ).promise();
       return data
     } catch (err) {
-      console.log(err);
+      throw new BadRequestException("Issue in the doc delete")
     }
   }
 }

@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService} from '@nestjs/config';
 import axios, {AxiosResponse} from 'axios'
 import { createReadStream } from 'fs';
@@ -29,6 +29,7 @@ export class AlfrescoService {
     }
     catch(err){
  console.log(err);
+ throw new BadRequestException("Issue in the doc upload")
     }
    
    
@@ -59,7 +60,7 @@ export class AlfrescoService {
       return response;
     }
     catch(err){
- console.log(err);
+      throw new BadRequestException("Issue in the doc upload")
     }
    
    
@@ -77,7 +78,7 @@ export class AlfrescoService {
     .then(response => Buffer.from(response.data, 'binary'))
     }
     catch(err){
-    console.log(err);
+      throw new BadRequestException("Issue in the doc upload")
     }
 
     
@@ -99,7 +100,7 @@ export class AlfrescoService {
       return response;
     }
     catch(err){
-    console.log(err);
+      throw new BadRequestException("Issue in the doc upload")
     }
 
     

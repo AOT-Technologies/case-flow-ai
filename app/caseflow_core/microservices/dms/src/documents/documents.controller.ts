@@ -1,4 +1,4 @@
-import { Body,Headers , Controller, Post, UploadedFile, UseInterceptors,Delete, Get, Patch,NotFoundException, Put, Query,UsePipes } from '@nestjs/common';
+import { Body,Headers , Controller, Post, UploadedFile, UseInterceptors,Delete, Get, Patch,NotFoundException, Put, Query,UsePipes, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -28,78 +28,89 @@ export class DocumentsController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadDocument(
     @UploadedFile() file: Express.Multer.File,@Body(new JoiValidationPipe(createDocumentSchema)) body,@Headers () auth) {
-      try {
-      if(body && body?.dmsprovider && auth?.authorization){    
-        const documentDetails = await this.fileService.uploadFile(file, body, body?.dmsprovider,auth?.authorization);
+      if(body && body?.dmsprovider && auth?.authorization){
+        let documentDetails;  
+        try {
+         documentDetails = await this.fileService.uploadFile(file, body, body?.dmsprovider,auth?.authorization)
+      } catch (error) { 
+        throw new HttpException({
+          status: HttpStatus.FORBIDDEN,
+          error: 'Document uploaded issue',}, HttpStatus.FORBIDDEN, {cause: error});
+      }
+        try{
         const user: any = await this.auth.getTokenUser(auth?.authorization);
         const formattedDocument: any = await this.helper.transform(body?.dmsprovider,'CREATE',documentDetails,body,user);
         const docdata = await this.documentService.createDocument(formattedDocument);
-        let response;
         if(docdata && docdata?.id){
-        response={
+        return {
           status:"success",
           data:docdata
         }
       }else{
-       response={
-          status:"error",
-          data:docdata
-        }
+        throw new BadRequestException("Error data in db insert")
       }
-        return response;
+      } catch (error) { 
+        throw new HttpException({
+          status: HttpStatus.FORBIDDEN,
+          error: 'Document uploaded issue',
+        }, HttpStatus.FORBIDDEN, {
+          cause: error
+        });
       }
+    }
       else{
-        console.log("Request body/header Not provided");
+        throw new BadRequestException("Request body/header Not provided")
       }
-  } catch (err) {
-    console.log(err.message);
-  }
+  
   }
 // edit document
 @Put('/upload')
   // @MessagePattern({ cmd: 'edit_document' })
   @UseInterceptors(FileInterceptor('file'))
   async EditDocument(@UploadedFile() file: Express.Multer.File,@Body(new JoiValidationPipe(updateDocumentSchema)) body,@Headers () auth,) {
-    try {
       if(body && body?.id)
       {
         const token=auth?.authorization;
         const document = await this.documentService.findOne(parseInt(body?.id));
         if(!document?.isdeleted) {
-          let documentDetails = await (file && document && body?.dmsprovider
-            ? this.fileService.updateFile(file, body,document, body?.dmsprovider,token)
-            : null);
-            const user: any = await this.auth.getTokenUser(auth?.authorization);
-
+          let documentDetails;
+          try{
+           documentDetails = await (file && document && body?.dmsprovider? this.fileService.updateFile(file, body,document, body?.dmsprovider,token): null);
+          
+        } catch (error) { 
+          throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Document uploaded issue',}, HttpStatus.FORBIDDEN, {cause: error});
+        }
+        try{
+          const user: any = await this.auth.getTokenUser(auth?.authorization);
           let formattedDocument: any = await this.helper.transform(body?.dmsprovider,'UPDATE',documentDetails,body,user);
           const docdata = await this.documentService.updateDocument(body?.id, formattedDocument);
-          
-          let response;
+
           if(docdata && docdata?.id){
-          response={
+         return {
             status:"success",
             data:docdata
           }
         }else{
-         response={
-            status:"error",
-            data:docdata
-          }
+          throw new BadRequestException("Error data in db insert")
         }
-        return response;
-      }
-      else {
-        console.log("No file found to update")
+      
+    } catch (error) { 
+      throw new HttpException({
+        status: HttpStatus.FORBIDDEN,
+        error: 'Document uploaded issue',
+      }, HttpStatus.FORBIDDEN, {
+        cause: error
+      });
+    }
+    }
+    else{
+      throw new BadRequestException("No file found to update");
       }
     }
     else{
-      console.log("Request body is not valid");
-    }
+      throw new BadRequestException("Request body/header Not Valid");
 
-    } catch (err) {
-      console.log(err.message);
-    }
-  }
+    }}
 
 
 
@@ -107,38 +118,40 @@ export class DocumentsController {
   @Delete('/delete')
   @UseInterceptors(FileInterceptor('file'))
   async DeleteDocument(@Body(new JoiValidationPipe(deleteDocumentSchema)) body,@Headers () auth,) {
-    try {
+    
       if(body && body?.id)
       {
-        let documentDetails = await this.documentService.findDocumentById(parseInt(body.id));
+        let documentDetails;
+        let dms;
+        try {
+        documentDetails = await this.documentService.findDocumentById(parseInt(body.id));
         documentDetails.isdeleted = true;
-        let dms =  await documentDetails?.dmsprovider;
-        return this.fileService.deleteFile(documentDetails,dms,auth?.authorization).then(
-          async () => {
+        dms =  await documentDetails?.dmsprovider;
+      } catch (error) { 
+        throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'DocumentId Not found in server',}, HttpStatus.FORBIDDEN, {cause: error});
+      }
+        try {
+        const deleteFile=await this.fileService.deleteFile(documentDetails,dms,auth?.authorization);
+      } catch (error) { 
+        throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Document uploaded issue',}, HttpStatus.FORBIDDEN, {cause: error});
+      }
+         try{
             const deleteData= await this.documentService.update(body?.id, documentDetails);
-            
-            let response;
             if(deleteData && deleteData?.id && deleteData?.isdeleted==true){
-            response={
+            return {
               status:"success",
               data:deleteData
             }
           }else{
-           response={
-              status:"error",
-              data:deleteData
+            throw new BadRequestException("Error while deleting");
             }
-          }
-        return response;
-          },
-        );
-        }
+      } catch (error) { 
+        throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Document delete issue',}, HttpStatus.FORBIDDEN, {cause: error});
+      }}
       else{
-        console.log("docid not provided");
+        throw new BadRequestException("Document id not given");
       }
-    } catch (error) {
-      console.log(error.message);
-    }
+ 
   }
 
 
@@ -152,23 +165,23 @@ export class DocumentsController {
           let documentDetails = await this.documentService.findDocumentById(parseInt(body.id));
           documentDetails.isdeleted = true;
           let dms =  await documentDetails?.dmsprovider;
-          return this.fileService.deleteFile(documentDetails,dms,auth?.authorization).then(
-            async () => {
-              const deleteData= await this.documentService.remove(body?.id);
-              
-          const response={
+          try{
+         const deleteFile=await this.fileService.deleteFile(documentDetails,dms,auth?.authorization);
+        } catch (error) { 
+          throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Document delete issue',}, HttpStatus.FORBIDDEN, {cause: error});
+        }
+          
+         const deleteData= await this.documentService.remove(body?.id); 
+         return {
             status:"success",
             data:deleteData
           }
-          return response;
-            },
-          );
           }
         else{
-          console.log("docid not provided");
+          throw new BadRequestException("No Document id provided");
         }
-      } catch (error) {
-        console.log(error.message);
+      } catch (error) { 
+        throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Document delete issue',}, HttpStatus.FORBIDDEN, {cause: error});
       }
     }
 
@@ -193,9 +206,9 @@ export class DocumentsController {
           return {data : data , type : documentDetails.type,name : documentDetails.name,dmsprovider : documentDetails.dmsprovider}
       }
     else{
-      console.log("DocId/header not provided");
-    }} catch (error) {
-        console.log(error.message);
-      }
+      throw new BadRequestException("DocId/header not provided");
+    }  } catch (error) { 
+      throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Document delete issue',}, HttpStatus.FORBIDDEN, {cause: error});
+    }
     }
 }
