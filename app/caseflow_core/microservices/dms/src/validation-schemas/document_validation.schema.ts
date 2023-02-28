@@ -28,3 +28,11 @@ export const deleteDocumentSchema = Joi.object({
 export const downloadDocumentSchema = Joi.object({
   id: Joi.number().required(),
 });
+
+export const fetchDocumentByIdSchema = Joi.object({
+  id: Joi.number().required(),
+});
+
+export const fetchDocumentByRefIdSchema = Joi.object({
+  referenceId: Joi.number().required(),
+});

@@ -6,7 +6,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from '../helpers/file.service';
 import { AuthService } from '../helpers/auth.service';
 
-import { createDocumentSchema, deleteDocumentSchema, downloadDocumentSchema, updateDocumentSchema } from "../validation-schemas/document_validation.schema"
+import { createDocumentSchema, deleteDocumentSchema, downloadDocumentSchema, fetchDocumentByIdSchema, fetchDocumentByRefIdSchema, updateDocumentSchema } from "../validation-schemas/document_validation.schema"
 import { DocumentsService } from './services/documents.service';
 import { Express } from 'express';
 import { TransformService } from '../helpers/transform.service';
@@ -216,7 +216,7 @@ export class DocumentsController {
     // Fetch Document by Document Id
     @Get('/fetchDocumentById')
     @UseInterceptors(FileInterceptor('file'))
-    async FetchDocumentById(@Query(new JoiValidationPipe(downloadDocumentSchema)) param,@Headers () auth,) {
+    async FetchDocumentById(@Query(new JoiValidationPipe(fetchDocumentByIdSchema)) param,@Headers () auth,) {
       try {   
         if(param && param?.id && auth?.authorization){          
           let documentDetails = await this.documentService.findOne(parseInt(param.id));  
@@ -241,7 +241,7 @@ export class DocumentsController {
     //Fetch All Documents related to the Reference Id
     @Get('/fetchDocumentByRefId')
     @UseInterceptors(FileInterceptor('file'))
-    async FetchDocumentByRefId(@Query(new JoiValidationPipe(downloadDocumentSchema)) param,@Headers () auth,) {
+    async FetchDocumentByRefId(@Query(new JoiValidationPipe(fetchDocumentByRefIdSchema)) param,@Headers () auth,) {
       try {   
         if(param && param?.referenceId && auth?.authorization){          
           let documentDetails = await this.documentService.findDocumentByRefId(param.referenceId);  
