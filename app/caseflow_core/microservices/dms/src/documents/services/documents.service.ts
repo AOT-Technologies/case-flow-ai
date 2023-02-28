@@ -173,4 +173,24 @@ export class DocumentsService {
   }
   }
 
+
+  async findDocumentByRefId( id : string ): Promise<Documents[]> {
+    try{
+      return await this.documentRepository.find({
+        where: {
+          referenceId: id,
+        },
+        order: {
+          id: "DESC",
+  },relations:["versions"]
+      },
+       );           
+    }catch(err){
+      console.log(err)
+    }
+  }
+  
+
 }
+
+

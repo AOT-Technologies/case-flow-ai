@@ -47,7 +47,7 @@ export class DocumentsController {
           data:docdata
         }
       }else{
-        throw new BadRequestException("Error data in db insert")
+        throw new BadRequestException("Error Occurs in DB insert !")
       }
       } catch (error) { 
         throw new HttpException({
@@ -91,7 +91,7 @@ export class DocumentsController {
             data:docdata
           }
         }else{
-          throw new BadRequestException("Error data in db insert")
+          throw new BadRequestException("Error!! Data Not Found In DB")
         }
       
     } catch (error) { 
@@ -133,7 +133,7 @@ export class DocumentsController {
         try {
         const deleteFile=await this.fileService.deleteFile(documentDetails,dms,auth?.authorization);
       } catch (error) { 
-        throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Document uploaded issue',}, HttpStatus.FORBIDDEN, {cause: error});
+        throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Document Delete issue',}, HttpStatus.FORBIDDEN, {cause: error});
       }
          try{
             const deleteData= await this.documentService.update(body?.id, documentDetails);
@@ -206,9 +206,82 @@ export class DocumentsController {
           return {data : data , type : documentDetails.type,name : documentDetails.name,dmsprovider : documentDetails.dmsprovider}
       }
     else{
-      throw new BadRequestException("DocId/header not provided");
+      throw new BadRequestException("Document ID / Header not provided !");
     }  } catch (error) { 
-      throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Document delete issue',}, HttpStatus.FORBIDDEN, {cause: error});
+      throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Error Occurs While Downloading !',}, HttpStatus.FORBIDDEN, {cause: error});
+    }
+    }
+
+
+    // Fetch Document by Document Id
+    @Get('/fetchDocumentById')
+    @UseInterceptors(FileInterceptor('file'))
+    async FetchDocumentById(@Query(new JoiValidationPipe(downloadDocumentSchema)) param,@Headers () auth,) {
+      try {   
+        if(param && param?.id && auth?.authorization){          
+          let documentDetails = await this.documentService.findOne(parseInt(param.id));  
+          if(documentDetails && documentDetails?.id){
+            return {
+              status:"success",
+              data:documentDetails
+            }
+          }else{
+            throw new BadRequestException("Error!! Data Not Found In DB")
+          }
+      }
+    else{
+      throw new BadRequestException("DocumentID / header not provided");
+    }  } catch (error) { 
+      throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Some error occurs during document fetch !',}, HttpStatus.FORBIDDEN, {cause: error});
+    }
+    }
+
+
+
+    //Fetch All Documents related to the Reference Id
+    @Get('/fetchDocumentByRefId')
+    @UseInterceptors(FileInterceptor('file'))
+    async FetchDocumentByRefId(@Query(new JoiValidationPipe(downloadDocumentSchema)) param,@Headers () auth,) {
+      try {   
+        if(param && param?.referenceId && auth?.authorization){          
+          let documentDetails = await this.documentService.findDocumentByRefId(param.referenceId);  
+          if(documentDetails ){
+            return {
+              status:"success",
+              data:documentDetails
+            }
+          }else{
+            throw new BadRequestException("Error!! Data Not Found In DB")
+          }
+      }
+    else{
+      throw new BadRequestException("Reference ID /header not provided");
+    }  } catch (error) { 
+      throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Some error occurs during document fetch !',}, HttpStatus.FORBIDDEN, {cause: error});
+    }
+    }
+
+
+    //Fetch All Documents
+    @Get('/fetchDocuments')
+    @UseInterceptors(FileInterceptor('file'))
+    async FetchDocuments(@Headers () auth,) {
+      try {   
+        if( auth?.authorization){          
+          let documentDetails = await this.documentService.findAll();  
+          if(documentDetails ){
+            return {
+              status:"success",
+              data:documentDetails
+            }
+          }else{
+            throw new BadRequestException("Error!! Data Not Found In DB")
+          }
+      }
+    else{
+      throw new BadRequestException("header not provided");
+    }  } catch (error) { 
+      throw new HttpException({status: HttpStatus.FORBIDDEN,error: 'Some error occurs during document fetch !',}, HttpStatus.FORBIDDEN, {cause: error});
     }
     }
 }
