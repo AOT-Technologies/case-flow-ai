@@ -107,8 +107,8 @@ const CaseDetails = () => {
     { id: 4, code: 4, text: "Complete" },
     { id: 5, code: 5, text: "Merge" },
     { id: 6, code: 6, text: "Archive" },
+    { id: 8, code: 8, text: "Add Notes" }, 
     { id: 7, code: 7, text: "Upload Document" }, 
-    { id: 8, code: 8, text: "Add Note" }, 
     { id: 9, code: 9, text: "Delete" },
   ];
   const [isDeleteConfirmationUpOpen, setDeleteConfirmation] = useState(false);
